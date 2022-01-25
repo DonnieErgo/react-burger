@@ -1,0 +1,6 @@
+.nav_link {
+  display: flex;
+  flex-flow: row nowrap;
+  text-decoration: none;
+  color: inherit;
+}
