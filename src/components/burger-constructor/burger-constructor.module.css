@@ -1,0 +1,23 @@
+.constr{
+  display: flex;
+  flex-flow: column;
+  width: 600px;
+  align-items: center;
+  justify-content: start;
+}
+
+.ingr{
+  max-height: 8.2vh;
+  display: flex;
+  align-items: center;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 48vh;
+  overflow-y: auto;
+}

@@ -9,24 +9,26 @@ const BurgerIngredients = props => {
 
   const [current, setCurrent] = React.useState('bun')
 
+  const findIngredients = (ingredientName) => props.data.filter(prod => prod.type === ingredientName)
+
   return (
     <section className={styles.ingredients}>
 
       <h1 className={'text text_type_main-large mb-5 mt-10'}>Соберите бургер</h1>
 
       <div className={`${styles.tab} mb-10`}>
-        <Tab value='bun' active={current === 'bun'} onClick={setCurrent}>Булки</Tab>
         <Tab value='main' active={current === 'main'} onClick={setCurrent}>Начинки</Tab>
         <Tab value='sauce' active={current === 'sauce'} onClick={setCurrent}>Соусы</Tab>
+        <Tab value='bun' active={current === 'bun'} onClick={setCurrent}>Булки</Tab>
       </div>
     
       <div className={`${styles.wrapper} custom-scroll`}>
 
-        <IngredientSection name='Булки' ingrList={props.data.filter(prod => prod.type === 'bun')} />
+        <IngredientSection name='Начинки' ingrList={findIngredients('main')} />
 
-        <IngredientSection name='Начинки' ingrList={props.data.filter(prod => prod.type === 'main')} />
+        <IngredientSection name='Соусы' ingrList={findIngredients('sauce')} />
 
-        <IngredientSection name='Соусы' ingrList={props.data.filter(prod => prod.type === 'sauce')} />
+        <IngredientSection name='Булки' ingrList={findIngredients('bun')} />
 
       </div>
     
