@@ -1,7 +1,7 @@
 import styles from './nav-item.module.css';
 import PropTypes from 'prop-types';
 
-const NavItem = (props:any) => {
+const NavItem = props => {
   return (
     <div className={`mr-2`}>
       <a className={`${styles.nav_link} mr-5 ml-5`} href={'#'}>
