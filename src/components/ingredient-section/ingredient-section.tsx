@@ -3,7 +3,7 @@ import BurgerIngredient from '../burger-ingredient/burger-ingredient';
 
 const IngredientSection = props => {
   return (
-    <section>
+    <section ref={props.tabRef}>
       <h2 className={'text text_type_main-medium mb-6'}>{props.name}</h2>
 
       <ul className={`${styles.product_list} mb-10 ml-4 mr-1`}>
