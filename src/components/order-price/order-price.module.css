@@ -1,0 +1,12 @@
+.wrapper {
+  max-height: 6.5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+}
+
+.price {
+  display: flex;
+  justify-content: center;
+}

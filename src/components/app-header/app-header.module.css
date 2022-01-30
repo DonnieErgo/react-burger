@@ -1,0 +1,24 @@
+.header {
+  background: #1C1C21;
+  width: 100%;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1240px;
+  height: 88px;
+}
+
+.nav_menu {
+  display: flex;
+  align-items: center;
+}
+
+.nav_container {
+  composes: nav_menu;
+  flex-grow: 0.7;
+  justify-content: space-between;
+}

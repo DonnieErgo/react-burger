@@ -1,0 +1,12 @@
+.ingredients {
+  max-width: 600px;
+}
+
+.tab {
+  display: flex;
+}
+
+.wrapper {
+  max-height: 65vh;
+  overflow-y: auto;
+}
