@@ -8,14 +8,14 @@ import { useState } from 'react'
 
 const IngredientSection = props => {
 
-  const [active, setActive] = useState(null)
-  const togglePopup = it => setActive(it)
+  const [activeIngredient, setActive] = useState(null)
+  const togglePopup = itemData => setActive(itemData)
 
   return (
     <section ref={props.tabRef}>
-      {active && 
+      {activeIngredient && 
         <Modal onClose={togglePopup}>
-          <IngredientDetails item={active} />
+          <IngredientDetails item={activeIngredient} />
         </Modal>
       }
       <h2 className={'text text_type_main-medium mb-6'}>{props.name}</h2>

@@ -16,7 +16,7 @@ const Modal = props => {
   return createPortal (
     <>
       <div className={`pt-10 pr-10 pb-15 pl-10 ${styles.modal}`}>
-        <div className={styles.close} onClick={() => {props.onClose(false)}}>
+        <div className={styles.close} onClick={() => {props.onClose()}}>
           <CloseIcon type="primary"/>
         </div>
         {props.children}
