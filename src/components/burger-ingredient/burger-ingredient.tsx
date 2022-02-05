@@ -1,7 +1,8 @@
 import styles from './burger-ingredient.module.css'
 import { CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
+import PropTypes from 'prop-types';
 
-const BurgerIngredient = (props) => {
+const BurgerIngredient = props => {
   return (
     <a className={`${styles.link} mb-8`} href='#'>
       <img className='pr-4 pl-4 mb-1' src={props.item.image} alt={props.item.name}/>
@@ -13,6 +14,14 @@ const BurgerIngredient = (props) => {
       <Counter count={0} size="default" />
     </a>
   )
+}
+
+BurgerIngredient.propTypes = {
+  item: PropTypes.shape({
+    image: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired
+  })
 }
 
 export default BurgerIngredient;

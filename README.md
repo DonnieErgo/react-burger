@@ -1,5 +1,6 @@
 ## ToDo:
-- Типизировать IngredientSection и OrderPrice
+- Прописать лоадеры
+- Проверка рефа на конкретный компонент в IngredientSection
 
 ### `npm start`
 

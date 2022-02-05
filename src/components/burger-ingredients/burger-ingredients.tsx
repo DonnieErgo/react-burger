@@ -1,25 +1,26 @@
-import React, { useRef } from 'react';
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './burger-ingredients.module.css'
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components'
 import burgerIngredients from '../../utils/types'
-import IngredientSection from '../ingredient-section/ingredient-section';
+import IngredientSection from '../ingredient-section/ingredient-section'
+
 
 const BurgerIngredients = props => {
 
   const findIngredients = (ingredientName) => props.data.filter(prod => prod.type === ingredientName)
 
-  const [current, setCurrent] = React.useState('main')
-  const mainRef = useRef()
-  const sauceRef = useRef()
-  const bunRef = useRef()
+  const [current, setCurrent] = useState('main')
+  const mainRef = useRef(null)
+  const sauceRef = useRef(null)
+  const bunRef = useRef(null)
 
   const handleTabClick = (e, ref) => {
     setCurrent(e)
     ref.current.scrollIntoView({behavior: 'smooth'})
   }
 
-  return (
+  return props.data.length && (
     <section className={styles.ingredients}>
 
       <h1 className={'text text_type_main-large mb-5 mt-10'}>Соберите бургер</h1>
