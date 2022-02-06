@@ -10,7 +10,7 @@ const BurgerIngredients = props => {
 
   const findIngredients = (ingredientName) => props.data.filter(prod => prod.type === ingredientName)
 
-  const [current, setCurrent] = useState('main')
+  const [current, setCurrent] = useState('bun')
   const mainRef = useRef(null)
   const sauceRef = useRef(null)
   const bunRef = useRef(null)
@@ -26,19 +26,15 @@ const BurgerIngredients = props => {
       <h1 className={'text text_type_main-large mb-5 mt-10'}>Соберите бургер</h1>
 
       <div className={`${styles.tab} mb-10`}>
-        <Tab value='main' active={current === 'main'} onClick={e => handleTabClick(e, mainRef)}>Начинки</Tab>
-        <Tab value='sauce' active={current === 'sauce'} onClick={e => handleTabClick(e, sauceRef)}>Соусы</Tab>
         <Tab value='bun' active={current === 'bun'} onClick={e => handleTabClick(e, bunRef)}>Булки</Tab>
+        <Tab value='sauce' active={current === 'sauce'} onClick={e => handleTabClick(e, sauceRef)}>Соусы</Tab>
+        <Tab value='main' active={current === 'main'} onClick={e => handleTabClick(e, mainRef)}>Начинки</Tab>
       </div>
     
       <div className={`${styles.wrapper} custom-scroll`}>
-
-        <IngredientSection tabRef={mainRef} name='Начинки' ingrList={findIngredients('main')} />
-
-        <IngredientSection tabRef={sauceRef} name='Соусы' ingrList={findIngredients('sauce')} />
-
         <IngredientSection tabRef={bunRef} name='Булки' ingrList={findIngredients('bun')} />
-
+        <IngredientSection tabRef={sauceRef} name='Соусы' ingrList={findIngredients('sauce')} />
+        <IngredientSection tabRef={mainRef} name='Начинки' ingrList={findIngredients('main')} />
       </div>
     
     </section>
