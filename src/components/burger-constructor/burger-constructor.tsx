@@ -1,25 +1,39 @@
+import {useState} from 'react';
 import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components'
 import PropTypes from 'prop-types'
 import burgerIngredients from '../../utils/types'
 import styles from './burger-constructor.module.css'
 import OrderPrice from '../order-price/order-price'
+import Modal from '../modal/modal'
+import OrderDetails from '../order-details/order-details'
+
 
 const BurgerConstructor = props => {
 
-  const cartSize = props.cart.length
+  // После того как будет реализован функционал выбора ингредиентов
+  // нужно убрать shift() или модифицировать поиск булочки
+  const checkAvailability = props.cart.length
+  const bun = checkAvailability ? props.cart.filter(el => el.type === 'bun').shift() : []
+  const mainIngredients = checkAvailability ? props.cart.filter(el => el.type !== 'bun') : []
 
-  const mainIngredients = props.cart.filter(el => el.type !== 'bun')
+  const [active, setActive] = useState(false)
+  const togglePopup = () => setActive(!active)
 
-  return (
+  return props.cart.length && (
     <section className={`${styles.constr} mt-25`}>
       
+      {active && 
+        <Modal onClose={togglePopup}>
+          <OrderDetails/>
+        </Modal>}
+
       <div className={`${styles.ingr} ml-12 mb-4`}>
         <ConstructorElement
           type="top"
           isLocked={true}
-          text={props.cart[0].name + ' (верх)'}
-          price={props.cart[0].price}
-          thumbnail={props.cart[0].image}/>
+          text={bun.name + ' (верх)'}
+          price={bun.price}
+          thumbnail={bun.image}/>
       </div>
 
       <ul className={`${styles.main} custom-scroll`}>
@@ -38,19 +52,16 @@ const BurgerConstructor = props => {
         <ConstructorElement
           type="bottom"
           isLocked={true}
-          text={props.cart[cartSize-1].name + ' (низ)'}
-          price={props.cart[cartSize-1].price}
-          thumbnail={props.cart[cartSize-1].image}/>
+          text={bun.name + ' (низ)'}
+          price={bun.price}
+          thumbnail={bun.image}/>
       </div>
 
-      <OrderPrice items={props.cart} />
+      <OrderPrice toggle={togglePopup} items={props.cart} />
 
     </section>
   )
 }
-
-// верхняя и нижния булка как отдельные компоненты тк меняется только type=top/bot и верх/низ в названии
-// по-середине просто всё между булками отрисовать через мап
 
 BurgerConstructor.propTypes = {
   cart: PropTypes.arrayOf(burgerIngredients)

@@ -1,6 +1,8 @@
-import styles from './order-price.module.css'
+import styles from './order-price.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import CurrencyIcon from '../currency-icon/currency-icon'
+import CurrencyIcon from '../currency-icon/currency-icon';
+import PropTypes from 'prop-types';
+import burgerIngredients from '../../utils/types'
 
 const OrderPrice = props => {
 
@@ -12,9 +14,14 @@ const OrderPrice = props => {
         <span className={'text text_type_digits-medium mr-2'}>{finalPrice}</span>
         <CurrencyIcon />
       </div>
-      <Button type="primary" size="medium">Оформить заказ</Button>
+      <Button onClick={props.toggle} type="primary" size="medium">Оформить заказ</Button>
     </div>
   )
+}
+
+OrderPrice.propTypes = {
+  items: PropTypes.arrayOf(burgerIngredients),
+  toggle: PropTypes.func.isRequired
 }
 
 export default OrderPrice

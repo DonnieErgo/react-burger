@@ -1,0 +1,32 @@
+.title {
+  width: 100%;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.img {
+  height: 240px;
+  width: 480px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.info {
+  padding: 0;
+  margin: 0;
+  display:flex;
+  justify-content: space-between;
+  list-style: none;
+  gap: 40px;
+}
+
+.item {
+  padding: 0;
+  margin: 0;
+  display:flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}

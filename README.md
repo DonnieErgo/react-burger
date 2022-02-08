@@ -1,5 +1,5 @@
 ## ToDo:
-- Типизировать IngredientSection и OrderPrice
+- Переписать проверки на нативные
 
 ### `npm start`
 
