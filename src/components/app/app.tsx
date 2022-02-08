@@ -2,6 +2,8 @@ import AppHeader from '../app-header/app-header'
 import styles from './app.module.css'
 import BurgerIngredients from '../burger-ingredients/burger-ingredients'
 import BurgerConstructor from '../burger-constructor/burger-constructor'
+import Loading from '../loading/loading'
+import Err from '../err/err'
 import {useEffect, useState} from 'react'
 
 const ingredientsApiUrl = 'https://norma.nomoreparties.space/api/ingredients'
@@ -11,8 +13,6 @@ const App = () => {
   const [ingredientsData, setIngredients] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
-  // Нужно прописать loading в компонентах и реализовать стейт ошибки
 
   useEffect(() => {
     const getData = async () => {
@@ -26,7 +26,6 @@ const App = () => {
         setError(null)
       } catch(err) {
         setError(err.message)
-        console.log(err.message)
         setIngredients([])
       } finally { setLoading(false) }
     }
@@ -37,8 +36,11 @@ const App = () => {
     <>
       <AppHeader />
       <main className={styles.main}>
-        <BurgerIngredients data={ingredientsData} />
-        <BurgerConstructor cart={ingredientsData} />
+        {error && <Err error={error} />}
+        {loading && <Loading />}
+        {!error && !loading && <>
+          <BurgerIngredients data={ingredientsData} />
+          <BurgerConstructor cart={ingredientsData} /></>}
       </main>
     </>
   )

@@ -5,7 +5,6 @@ import { Tab } from '@ya.praktikum/react-developer-burger-ui-components'
 import burgerIngredients from '../../utils/types'
 import IngredientSection from '../ingredient-section/ingredient-section'
 
-
 const BurgerIngredients = props => {
 
   const findIngredients = (ingredientName) => props.data.filter(prod => prod.type === ingredientName)
