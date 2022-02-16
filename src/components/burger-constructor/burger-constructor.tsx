@@ -7,11 +7,11 @@ import { Context } from '../../services/appContext'
 const BurgerConstructor = () => {
 
   const { state } = useContext(Context)
-  const cart = state.cart
+  const ingredients = state.ingredients
 
-  const checkAvailability = cart.length
-  const bun = checkAvailability ? cart.find(el => el.type === 'bun') : []
-  const mainIngredients = checkAvailability ? cart.filter(el => el.type !== 'bun') : []
+  const checkAvailability = ingredients.length
+  const bun = checkAvailability ? ingredients.find(el => el.type === 'bun') : []
+  const mainIngredients = checkAvailability ? ingredients.filter(el => el.type !== 'bun') : []
 
   return checkAvailability && (
     <section className={`${styles.constr} mt-25`}>

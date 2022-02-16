@@ -13,19 +13,19 @@ const OrderInfo = () => {
   const [orderName, setOrderName] = useState('')
   const togglePopup = () => setActive(!active)
   const orderSubmitUrl = 'https://norma.nomoreparties.space/api/orders'
-  const cart = state.cart
+  const ingredients = state.ingredients
 
   const orderSubmit = async () => {
     try {
       const res = await fetch(orderSubmitUrl, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ ingredients: cart.map(i => i._id) })
+        body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
       })
       if (!res.ok) {
         throw new Error(`Fetching ${orderSubmitUrl} failed. Status is ${res.status}`)
       }
-      let data = await res.json()
+      const data = await res.json()
       setOrderNumber(data.order.number)
       setOrderName(data.name)
       togglePopup()
@@ -38,7 +38,7 @@ const OrderInfo = () => {
 
   useEffect(() => {
     dispatcher({type:'totalPrice'})
-  }, [cart])
+  }, [ingredients])
 
   return(
 
