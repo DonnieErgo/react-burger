@@ -14,7 +14,7 @@ const IngredientSection = props => {
   return (
     <section ref={props.tabRef}>
       {activeIngredient && 
-        <Modal onClose={togglePopup}>
+        <Modal onClose={togglePopup} title={'Детали ингредиента'}>
           <IngredientDetails item={activeIngredient} />
         </Modal>
       }
@@ -32,7 +32,6 @@ const IngredientSection = props => {
 IngredientSection.propTypes = {
   tabRef: PropTypes.oneOfType([
     PropTypes.func, 
-    // Стоит резерчнуть варианты проверки рефа на конкретный компонент, сходу не взлетело
     PropTypes.shape({ current: PropTypes.any })]),
   name: PropTypes.string,
   ingrList: PropTypes.arrayOf(burgerIngredients),

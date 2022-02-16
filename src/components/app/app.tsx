@@ -4,13 +4,38 @@ import BurgerIngredients from '../burger-ingredients/burger-ingredients'
 import BurgerConstructor from '../burger-constructor/burger-constructor'
 import Loading from '../loading/loading'
 import Err from '../err/err'
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useReducer} from 'react'
+import { Context } from '../../services/appContext'
 
 const ingredientsApiUrl = 'https://norma.nomoreparties.space/api/ingredients'
+const initialState = {
+  ingredients: [],
+  totalPrice: 0,
+  loading: true
+}
+
+const reducer = (state, action) => {
+  const ingredients = state.ingredients
+  let totalPrice
+
+  if (ingredients.length > 0) {
+    totalPrice = (ingredients.filter(i => i.type !== 'bun').reduce((a,i) => a + i.price, 0)) + 
+      (ingredients.find(i => i.type === 'bun').price * 2)
+  }
+
+  switch (action.type) {
+    case 'ingredients':
+      return {...state, ingredients: action.payload}
+    case 'totalPrice':
+      return {...state, totalPrice: totalPrice}
+    default:
+      throw new Error(`Wrong type of action: ${action.type}`);
+  }
+}
 
 const App = () => {
 
-  const [ingredientsData, setIngredients] = useState([])
+  const [state, dispatcher] = useReducer(reducer, initialState);
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -21,12 +46,12 @@ const App = () => {
         if (!res.ok) { 
           throw new Error(`Fetching ${ingredientsApiUrl} failed. Status is ${res.status}`)
         }
-        let actualData = await res.json()
-        setIngredients(actualData.data)
+        const actualData = await res.json()
+        dispatcher({type:'ingredients', payload: actualData.data})
         setError(null)
       } catch(err) {
         setError(err.message)
-        setIngredients([])
+        dispatcher({type:'ingredients', payload: []})
       } finally { setLoading(false) }
     }
     getData()
@@ -39,8 +64,10 @@ const App = () => {
         {error && <Err error={error} />}
         {loading && <Loading />}
         {!error && !loading && <>
-          <BurgerIngredients data={ingredientsData} />
-          <BurgerConstructor cart={ingredientsData} /></>}
+          <Context.Provider value={{ state, dispatcher }}>
+              <BurgerIngredients />
+              <BurgerConstructor />
+          </Context.Provider></>}
       </main>
     </>
   )

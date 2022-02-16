@@ -1,13 +1,15 @@
-import { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useRef, useState, useContext } from 'react';
 import styles from './burger-ingredients.module.css'
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components'
-import burgerIngredients from '../../utils/types'
 import IngredientSection from '../ingredient-section/ingredient-section'
+import { Context } from '../../services/appContext'
 
-const BurgerIngredients = props => {
+const BurgerIngredients = () => {
 
-  const findIngredients = (ingredientName) => props.data.filter(prod => prod.type === ingredientName)
+  const { state } = useContext(Context)
+  const ingredients = state.ingredients
+
+  const findIngredients = (ingredientName) => ingredients.filter(prod => prod.type === ingredientName)
 
   const [current, setCurrent] = useState('bun')
   const mainRef = useRef(null)
@@ -19,7 +21,7 @@ const BurgerIngredients = props => {
     ref.current.scrollIntoView({behavior: 'smooth'})
   }
 
-  return props.data.length && (
+  return ingredients.length && (
     <section className={styles.ingredients}>
 
       <h1 className={'text text_type_main-large mb-5 mt-10'}>Соберите бургер</h1>
@@ -38,10 +40,6 @@ const BurgerIngredients = props => {
     
     </section>
   )
-}
-
-BurgerIngredients.propTypes = {
-  data: PropTypes.arrayOf(burgerIngredients)
 }
 
 export default BurgerIngredients

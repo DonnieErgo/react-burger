@@ -16,6 +16,7 @@ const Modal = props => {
   return createPortal (
     <>
       <div className={`pt-10 pr-10 pb-15 pl-10 ${styles.modal}`}>
+        <h2 className={`${styles.title} mt-4 text text_type_main-large`}>{props.title}</h2>
         <div className={styles.close} onClick={() => {props.onClose()}}>
           <CloseIcon type="primary"/>
         </div>
@@ -28,6 +29,7 @@ const Modal = props => {
 
 Modal.propTypes = {
   onClose: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired
 }
 
