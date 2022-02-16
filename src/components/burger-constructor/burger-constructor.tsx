@@ -1,30 +1,20 @@
-import {useState} from 'react';
+import { useContext } from 'react';
 import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components'
-import PropTypes from 'prop-types'
-import burgerIngredients from '../../utils/types'
 import styles from './burger-constructor.module.css'
-import OrderPrice from '../order-price/order-price'
-import Modal from '../modal/modal'
-import OrderDetails from '../order-details/order-details'
+import OrderInfo from '../order-info/order-info'
+import { Context } from '../../services/appContext'
 
-const BurgerConstructor = props => {
+const BurgerConstructor = () => {
 
-  // После того как будет реализован функционал выбора ингредиентов
-  // нужно убрать shift() или модифицировать поиск булочки
-  const checkAvailability = props.cart.length
-  const bun = checkAvailability ? props.cart.filter(el => el.type === 'bun').shift() : []
-  const mainIngredients = checkAvailability ? props.cart.filter(el => el.type !== 'bun') : []
+  const { state } = useContext(Context)
+  const cart = state.cart
 
-  const [active, setActive] = useState(false)
-  const togglePopup = () => setActive(!active)
+  const checkAvailability = cart.length
+  const bun = checkAvailability ? cart.find(el => el.type === 'bun') : []
+  const mainIngredients = checkAvailability ? cart.filter(el => el.type !== 'bun') : []
 
   return checkAvailability && (
     <section className={`${styles.constr} mt-25`}>
-      
-      {active && 
-        <Modal onClose={togglePopup}>
-          <OrderDetails/>
-        </Modal>}
 
       <div className={`${styles.ingr} ml-12 mb-4`}>
         <ConstructorElement
@@ -56,14 +46,10 @@ const BurgerConstructor = props => {
           thumbnail={bun.image}/>
       </div>
 
-      <OrderPrice toggle={togglePopup} items={props.cart} />
+      <OrderInfo />
 
     </section>
   )
-}
-
-BurgerConstructor.propTypes = {
-  cart: PropTypes.arrayOf(burgerIngredients)
 }
 
 export default BurgerConstructor

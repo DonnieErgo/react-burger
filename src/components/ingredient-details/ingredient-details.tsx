@@ -4,8 +4,7 @@ import styles from './ingredient-details.module.css';
 const IngredientDetails = props => {
   return (
   <>
-    <h2 className={`${styles.title} mt-4 text text_type_main-large`}>Детали ингредиента</h2>
-    <img className={styles.img} src={props.item.image} alt={props.item.name}/>
+    <img className={`${styles.img} mt-8`} src={props.item.image} alt={props.item.name}/>
     <h3 className={'text text_type_main-medium mt-8 mb-8'}>{props.item.name}</h3>
     <div>
       <ul className={styles.info}>
