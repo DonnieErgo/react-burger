@@ -5,6 +5,7 @@ import BurgerConstructor from '../burger-constructor/burger-constructor'
 import Loading from '../loading/loading'
 import Err from '../err/err'
 import {useEffect, useState} from 'react'
+import { Context } from '../../services/appContext'
 
 const ingredientsApiUrl = 'https://norma.nomoreparties.space/api/ingredients'
 
@@ -39,8 +40,11 @@ const App = () => {
         {error && <Err error={error} />}
         {loading && <Loading />}
         {!error && !loading && <>
-          <BurgerIngredients data={ingredientsData} />
-          <BurgerConstructor cart={ingredientsData} /></>}
+          <Context.Provider value={null}>
+              <BurgerIngredients data={ingredientsData} />
+              <BurgerConstructor cart={ingredientsData} />
+          </Context.Provider>
+          </>}
       </main>
     </>
   )

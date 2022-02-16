@@ -7,7 +7,6 @@ import OrderPrice from '../order-price/order-price'
 import Modal from '../modal/modal'
 import OrderDetails from '../order-details/order-details'
 
-
 const BurgerConstructor = props => {
 
   // После того как будет реализован функционал выбора ингредиентов
@@ -19,7 +18,7 @@ const BurgerConstructor = props => {
   const [active, setActive] = useState(false)
   const togglePopup = () => setActive(!active)
 
-  return props.cart.length && (
+  return checkAvailability && (
     <section className={`${styles.constr} mt-25`}>
       
       {active && 
