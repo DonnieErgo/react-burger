@@ -4,26 +4,25 @@ import PropTypes from 'prop-types'
 import burgerIngredients from '../../utils/types'
 import Modal from '../modal/modal'
 import IngredientDetails from '../ingredient-details/ingredient-details'
-import { useState } from 'react'
+import { ingredientsSelector, removeIngredientDetails } from '../../services/slices/ingredients'
+import { useDispatch, useSelector } from 'react-redux'
 
-const IngredientSection = props => {
+const IngredientSection = ({ tabRef, name, ingrList }) => {
 
-  const [activeIngredient, setActive] = useState(null)
-  const togglePopup = itemData => setActive(itemData)
+  const dispatch = useDispatch()
+  const { ingredientDetails, activeIngredientDetailsModal } = useSelector(ingredientsSelector)
 
   return (
-    <section ref={props.tabRef}>
-      {activeIngredient && 
-        <Modal onClose={togglePopup} title={'Детали ингредиента'}>
-          <IngredientDetails item={activeIngredient} />
+    <section ref={tabRef}>
+      {activeIngredientDetailsModal && 
+        <Modal onClose={()=>{dispatch(removeIngredientDetails())}} title={'Детали ингредиента'}>
+          <IngredientDetails item={ingredientDetails} />
         </Modal>
       }
-      <h2 className={'text text_type_main-medium mb-6'}>{props.name}</h2>
+      
+      <h2 className={'text text_type_main-medium mb-6'}>{name}</h2>
       <ul className={`${styles.product_list} mb-10 ml-4 mr-1`}>
-        {props.ingrList.map(it => 
-        <li key={it._id} onClick={()=>{togglePopup(it)}} > 
-          <BurgerIngredient item={it} /> 
-        </li>)}
+        {ingrList.map(it => <BurgerIngredient item={it} key={it._id} />)}
       </ul>
     </section>
   )
@@ -34,8 +33,7 @@ IngredientSection.propTypes = {
     PropTypes.func, 
     PropTypes.shape({ current: PropTypes.any })]),
   name: PropTypes.string,
-  ingrList: PropTypes.arrayOf(burgerIngredients),
-  toggle: PropTypes.func
+  ingrList: PropTypes.arrayOf(burgerIngredients)
 }
 
 export default IngredientSection

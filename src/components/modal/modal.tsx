@@ -28,7 +28,7 @@ const Modal = props => {
 }
 
 Modal.propTypes = {
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.any,
   title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired
 }

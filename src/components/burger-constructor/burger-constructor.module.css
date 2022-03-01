@@ -18,6 +18,10 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 48vh;
+  height: 48vh;
   overflow-y: auto;
+}
+
+.border {
+  border: 2px solid #4C4CFF
 }

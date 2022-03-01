@@ -1,52 +1,64 @@
-import { useContext } from 'react';
-import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components'
+import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './burger-constructor.module.css'
 import OrderInfo from '../order-info/order-info'
-import { Context } from '../../services/appContext'
+import ConstructorItem from '../constructor-item/constructor-item'
+import { useSelector, useDispatch } from 'react-redux'
+import { useDrop } from 'react-dnd'
+import { nanoid } from 'nanoid'
+import { ingredientsSelector, addIngredientToCart, deleteIngredientFromCart } from '../../services/slices/ingredients'
 
 const BurgerConstructor = () => {
 
-  const { state } = useContext(Context)
-  const ingredients = state.ingredients
+  const dispatch = useDispatch()
+  const { cartIngredients } = useSelector(ingredientsSelector)
+  const cartBun = cartIngredients.find(item => item.type === 'bun')
+  const cartOther = cartIngredients.filter(item => item.type !== 'bun')
 
-  const checkAvailability = ingredients.length
-  const bun = checkAvailability ? ingredients.find(el => el.type === 'bun') : []
-  const mainIngredients = checkAvailability ? ingredients.filter(el => el.type !== 'bun') : []
+  const [{isOver}, dropTarget] = useDrop({
+    accept: 'ingredient',
+    drop: (item:{type: string, _id: string}) => {
+      if (item.type === 'bun') {
+        dispatch(deleteIngredientFromCart(item))
+        dispatch(addIngredientToCart(item))
+      } else { dispatch(addIngredientToCart(item)) }
+    },
+    collect: monitor => ({
+      isOver: monitor.isOver()
+    })
+  })
 
-  return checkAvailability && (
-    <section className={`${styles.constr} mt-25`}>
+  return (
+    <section ref={dropTarget} className={`${styles.constr} mt-25`} 
+      style={{outline: isOver ? '2px solid #4C4CFF' : 'none'}}>
 
-      <div className={`${styles.ingr} ml-12 mb-4`}>
+      { (cartIngredients.length === 0) &&
+        <span className='text text_type_main-medium'> Перетащите сюда ингредиенты </span> }
+
+      {cartBun && <div className={`${styles.ingr} ml-12 mb-4`}>
         <ConstructorElement
           type="top"
           isLocked={true}
-          text={bun.name + ' (верх)'}
-          price={bun.price}
-          thumbnail={bun.image}/>
-      </div>
+          text={cartBun.name + ' (верх)'}
+          price={cartBun.price}
+          thumbnail={cartBun.image}/>
+      </div>}
 
       <ul className={`${styles.main} custom-scroll`}>
-        {mainIngredients.map((item, index) => 
-            (<li key={item._id + index} className={`${styles.ingr} mr-3 mb-4`}>
-              <DragIcon type="primary"/>
-              <ConstructorElement
-                text={item.name}
-                price={item.price}
-                thumbnail={item.image}/>
-            </li>)
+        {cartOther.length !== 0 && cartOther.map((item, index) => 
+          <ConstructorItem item={item} index={index} key={nanoid()} />
         )}
       </ul>
 
-      <div className={`${styles.ingr} ml-12 mb-10 mt-4`}>
+      {cartBun && <div className={`${styles.ingr} ml-12 mb-10 mt-4`}>
         <ConstructorElement
           type="bottom"
           isLocked={true}
-          text={bun.name + ' (низ)'}
-          price={bun.price}
-          thumbnail={bun.image}/>
-      </div>
+          text={cartBun.name + ' (низ)'}
+          price={cartBun.price}
+          thumbnail={cartBun.image}/>
+      </div>}
 
-      <OrderInfo />
+      { cartIngredients.length >= 1 && <OrderInfo />}
 
     </section>
   )
