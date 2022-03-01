@@ -67,12 +67,14 @@ const ingredientsSlice = createSlice({
 
       if (cart.length > 0) {
         total = (cart.filter(i => i.type !== 'bun').reduce((a,i) => a + i.price, 0)) + 
-          (cart.find(i => i.type === 'bun').price * 2)
+          (cart.some(i => i.type === 'bun') ? (cart.find(i => i.type === 'bun').price * 2) : 0)
       }
 
       state.totalPrice = total
     },
     dragIngredients: (state, { payload }) => {
+      console.log(payload.dragIndex)
+      console.log(payload.hoverIndex)
       const ingredientsToChange = [...state.cartIngredients]
       ingredientsToChange.splice(payload.drag, 0, ingredientsToChange.splice(payload.hover, 1)[0])
       state.cartIngredients = ingredientsToChange
@@ -98,7 +100,7 @@ export const {
 
 // Выяснить как работает ссылка на селектор т.к. сейчас из деструктуризации
 // ingredientsSelector я достаю вообще все стейты, возможно надо переписать по аналогии с экшенами
-export const ingredientsSelector = (state) => state.ingredients
+export const ingredientsSelector = state => state.ingredients
 export const ingredientsReducer = ingredientsSlice.reducer
 
 export const fetchIngredients = () => {

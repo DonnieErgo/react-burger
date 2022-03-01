@@ -58,7 +58,7 @@ const BurgerConstructor = () => {
           thumbnail={cartBun.image}/>
       </div>}
 
-      { cartIngredients.length >= 1 && <OrderInfo />}
+      { cartIngredients.length >= 1 && <OrderInfo /> }
 
     </section>
   )

@@ -13,25 +13,20 @@ const ConstructorItem = ({ item, index }) => {
 
   const ref = useRef(null)
 
-  type itemHanlder = {
-    id: number,
-    handlerId: number,
-    index: number
-  }
-
   const [{ isDragging }, drag] = useDrag({
     type: 'cartIngredient',
     item: () => ({ item, index }),
     collect: (monitor: any) => ({ isDragging: monitor.isDragging() })
   })
 
-  const [action, drop] = useDrop<itemHanlder>({
+  // @ts-ignore
+  const [{ handlerId }, drop] = useDrop({
     accept: 'cartIngredient',
     collect: monitor => ({ handlerId: monitor.getHandlerId() }),
     hover: (item, monitor) => {
       if (!ref.current) return
-      
-      const dragIndex = item.id
+      // @ts-ignore
+      const dragIndex = item.index
       const hoverIndex = index
 
       if (dragIndex === hoverIndex) return
@@ -43,7 +38,8 @@ const ConstructorItem = ({ item, index }) => {
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return
 
-      dispatch(dragIngredients({drag: dragIndex, hover: hoverIndex }))
+      dispatch(dragIngredients({ dragIndex, hoverIndex }))
+      // @ts-ignore
       item.index = hoverIndex
     }
   })
@@ -54,8 +50,8 @@ const ConstructorItem = ({ item, index }) => {
 
   return (
     <li style={{ opacity }} 
-        data-handler-id={action}
-        ref={ref} 
+        data-handler-id={handlerId}
+        ref={ref}
         draggable
         className={`${styles.ingr} mr-3 mb-4`} >
       <DragIcon type="primary"/>
