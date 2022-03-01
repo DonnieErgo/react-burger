@@ -74,7 +74,7 @@ const ingredientsSlice = createSlice({
     },
     dragIngredients: (state, { payload }) => {
       const ingredientsToChange = [...state.cartIngredients]
-      ingredientsToChange.splice(payload.dragIndex, 0, ingredientsToChange.splice(payload.hoverIndex, 1)[0])
+      ingredientsToChange.splice(payload.drag, 0, ingredientsToChange.splice(payload.hover, 1)[0])
       state.cartIngredients = ingredientsToChange
     }
   }
@@ -127,8 +127,4 @@ export const sendOrderInfo = ingredients => {
       dispatch(sendOrderSuccess(actualData))
     } catch (error) { dispatch(sendOrderFail(error.message)) }
   }
-}
-
-export const dragItems = (dragIndex, hoverIndex) => {
-  return dispatch => dispatch(dragIngredients(dragIndex, hoverIndex))
 }

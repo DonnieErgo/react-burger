@@ -2,7 +2,7 @@ import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burg
 import styles from './constructor-item.module.css'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
-import { deleteIngredientFromCart, dragItems } from '../../services/slices/ingredients'
+import { deleteIngredientFromCart, dragIngredients } from '../../services/slices/ingredients'
 import { useDrag, useDrop } from "react-dnd"
 import { useRef } from 'react'
 
@@ -12,12 +12,18 @@ const ConstructorItem = ({ item, index }) => {
   // Нужно найти какое-то читаемое решение по sortable list
 
   const ref = useRef(null)
-  const id = item._id
 
   type itemHanlder = {
-    index: number,
-    handlerId: number
+    id: number,
+    handlerId: number,
+    index: number
   }
+
+  const [{ isDragging }, drag] = useDrag({
+    type: 'cartIngredient',
+    item: () => ({ item, index }),
+    collect: (monitor: any) => ({ isDragging: monitor.isDragging() })
+  })
 
   const [action, drop] = useDrop<itemHanlder>({
     accept: 'cartIngredient',
@@ -25,7 +31,7 @@ const ConstructorItem = ({ item, index }) => {
     hover: (item, monitor) => {
       if (!ref.current) return
       
-      const dragIndex = item.index
+      const dragIndex = item.id
       const hoverIndex = index
 
       if (dragIndex === hoverIndex) return
@@ -37,16 +43,9 @@ const ConstructorItem = ({ item, index }) => {
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return
 
-      dispatch(dragItems(dragIndex, hoverIndex))
-
+      dispatch(dragIngredients({drag: dragIndex, hover: hoverIndex }))
       item.index = hoverIndex
     }
-  })
-
-  const [{ isDragging }, drag] = useDrag({
-    type: 'cartIngredient',
-    item: () => ({ item, index }),
-    collect: monitor => ({ isDragging: monitor.isDragging() })
   })
 
   const opacity = isDragging ? 0.2 : 1
