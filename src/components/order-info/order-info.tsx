@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import styles from './order-info.module.css'
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components'
 import CurrencyIcon from '../currency-icon/currency-icon'
@@ -12,6 +12,8 @@ const OrderInfo = () => {
   const dispatch = useDispatch()
   const [price, setPrice] = useState(0)
 
+  const memoPrice = useMemo(() => getPrice(), [price])
+
   const getPrice = () => {
     let total
     if (cartIngredients.length > 0) {
@@ -23,7 +25,7 @@ const OrderInfo = () => {
 
   useEffect(() => {
     // @ts-ignore
-    getPrice()
+    memoPrice()
   }, [cartIngredients])
 
   return(
