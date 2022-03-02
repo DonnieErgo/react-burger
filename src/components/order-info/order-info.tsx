@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './order-info.module.css'
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components'
 import CurrencyIcon from '../currency-icon/currency-icon'
@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { sendOrderInfo, ingredientsSelector, closeOrderModal, getTotalPrice } from '../../services/slices/ingredients'
 
 const OrderInfo = () => {
-  const { totalPrice, cartIngredients, orderName, orderModal } = useSelector(ingredientsSelector)
+  const { cartIngredients, orderName, orderModal } = useSelector(ingredientsSelector)
   const dispatch = useDispatch()
   const [price, setPrice] = useState(0)
 
-  const memoPrice = useMemo(() => getPrice(), [price])
+  // Подумать над мемоизацией
 
   const getPrice = () => {
     let total
@@ -25,7 +25,7 @@ const OrderInfo = () => {
 
   useEffect(() => {
     // @ts-ignore
-    memoPrice()
+    getPrice()
   }, [cartIngredients])
 
   return(
