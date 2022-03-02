@@ -15,6 +15,7 @@ const IngredientSection = ({ tabRef, name, ingrList }) => {
   return (
     <section ref={tabRef}>
       {activeIngredientDetailsModal && 
+        // @ts-ignore
         <Modal onClose={()=>{dispatch(removeIngredientDetails())}} title={'Детали ингредиента'}>
           <IngredientDetails item={ingredientDetails} />
         </Modal>

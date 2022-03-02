@@ -4,7 +4,6 @@ import OrderInfo from '../order-info/order-info'
 import ConstructorItem from '../constructor-item/constructor-item'
 import { useSelector, useDispatch } from 'react-redux'
 import { useDrop } from 'react-dnd'
-import { nanoid } from 'nanoid'
 import { ingredientsSelector, addIngredientToCart, deleteIngredientFromCart } from '../../services/slices/ingredients'
 
 const BurgerConstructor = () => {
@@ -46,7 +45,7 @@ const BurgerConstructor = () => {
       <ul className={`${styles.main} custom-scroll`}>
         {cartOther.length !== 0 && cartOther.map((item, index) => 
         // @ts-ignore
-          <ConstructorItem item={item} index={index} key={nanoid()} />
+          <ConstructorItem item={item} index={index} key={item.id} />
         )}
       </ul>
 
@@ -59,7 +58,7 @@ const BurgerConstructor = () => {
           thumbnail={cartBun.image}/>
       </div>}
 
-      {/* { cartIngredients.length >= 1 && <OrderInfo /> } */}
+      { cartIngredients.length >= 1 && <OrderInfo /> }
 
     </section>
   )

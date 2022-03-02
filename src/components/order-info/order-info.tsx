@@ -12,6 +12,7 @@ const OrderInfo = () => {
   const { totalPrice, cartIngredients, orderName, orderModal } = useSelector(ingredientsSelector)
 
   useEffect(() => {
+    // @ts-ignore
     dispatch(getTotalPrice())
   }, [cartIngredients])
 
@@ -20,6 +21,7 @@ const OrderInfo = () => {
     <div className={styles.wrapper}>
 
       {orderModal &&
+      // @ts-ignore
       <Modal onClose={()=>{dispatch(closeOrderModal())}} title={orderName} >
         <OrderDetails />
       </Modal>}

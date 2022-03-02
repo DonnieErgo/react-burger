@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { ingredientsApiUrl, orderSubmitUrl } from '../../utils/constants'
+import { nanoid } from 'nanoid'
 
 export const initialState = {
   ingredients: [],
@@ -36,8 +37,17 @@ const ingredientsSlice = createSlice({
       state.ingredientDetails = null
       state.activeIngredientDetailsModal = false
     },
-    addIngredientToCart: (state, { payload }) => {
-      state.cartIngredients = [...state.cartIngredients, payload]
+    addIngredientToCart: {
+      // @ts-ignore
+      reducer: (state, { payload }) => {
+        state.cartIngredients.push(payload)
+      },
+      // @ts-ignore
+      prepare: item => {
+        const id = nanoid()
+        // @ts-ignore
+        return { payload: { id, ...item } }
+      },
     },
     deleteIngredientFromCart: (state, { payload }) => {
       if (payload.type === 'bun') state.cartIngredients = state.cartIngredients.filter(i => i.type !== 'bun')
