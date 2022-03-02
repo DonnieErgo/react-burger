@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit'
 import { ingredientsApiUrl, orderSubmitUrl } from '../../utils/constants'
-import { nanoid } from 'nanoid'
+import { useHttp } from "../hooks/http.hook";
 
 export const initialState = {
   ingredients: [],
@@ -19,16 +19,6 @@ const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
-    getIngredients: state => { state.loading = true },
-    getIngredientsSuccess: (state, { payload }) => {
-      state.loading = false
-      state.error = false
-      state.ingredients = payload
-    },
-    getIngredientsFail: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
-    },
     showIngredientDetails: (state, { payload }) => {
       state.ingredientDetails = payload
       state.activeIngredientDetailsModal = true
@@ -56,20 +46,6 @@ const ingredientsSlice = createSlice({
         state.cartIngredients = state.cartIngredients.filter((i, ind) => ind !== itemIndex)
       }
     },
-    sendOrder: state => { state.loading = true },
-    sendOrderSuccess: (state, { payload }) => {
-      state.loading = false
-      state.error = false
-      state.orderNumber = payload.order.number
-      state.orderName = payload.name
-      state.orderModal = true
-    },
-    sendOrderFail: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
-      state.orderNumber = 0
-      state.orderName = ''
-    },
     closeOrderModal: state => { state.orderModal = false },
     getTotalPrice: state => {
       const cart = state.cartIngredients
@@ -83,10 +59,40 @@ const ingredientsSlice = createSlice({
       state.totalPrice = total
     },
     dragIngredients: (state, { payload }) => {
-      const ingredientsToChange = state.cartIngredients
+      const ingredientsToChange = state.cartIngredients.filter(i => i.type !== 'bun')
       ingredientsToChange[payload.drag] = ingredientsToChange.splice(payload.hover, 1, ingredientsToChange[payload.drag])[0]
-      state.cartIngredients = ingredientsToChange
+      state.cartIngredients = ingredientsToChange.concat(state.cartIngredients.filter(i => i.type === 'bun'))
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(sendOrderInfo.pending, state => { state.loading = true })
+      .addCase(sendOrderInfo.fulfilled, (state, { payload }) => {
+        state.loading = false
+        state.error = false
+        state.orderNumber = payload.order.number
+        state.orderName = payload.name
+        state.orderModal = true
+      })
+      // разобраться как вывести текст ошибки из самого payload через кастомный хук
+      .addCase(sendOrderInfo.rejected, (state, { payload }) => {
+        state.loading = false
+        state.error = 'Проблема с отправкой заказа'
+        state.orderNumber = 0
+        state.orderName = ''
+      })
+      .addCase(fetchIngredients.pending, state => { state.loading = true })
+      .addCase(fetchIngredients.fulfilled, (state, { payload }) => {
+        state.loading = false
+        state.error = false
+        state.ingredients = payload.data
+      })
+      // разобраться как вывести текст ошибки из самого payload через кастомный хук
+      .addCase(fetchIngredients.rejected, (state, { payload }) => {
+        state.loading = false
+        state.error = 'Проблема с загрузкой ингредиентов'
+      })
+      .addDefaultCase(() => {})
   }
 })
 
@@ -111,30 +117,18 @@ export const {
 export const ingredientsSelector = state => state.ingredients
 export const ingredientsReducer = ingredientsSlice.reducer
 
-export const fetchIngredients = () => {
-  return async dispatch => { 
-    dispatch(getIngredients())
-    try {
-      const res = await fetch(ingredientsApiUrl)
-      if (!res.ok) { throw new Error(`Fetching ${ingredientsApiUrl} failed. Status is ${res.status}`) }
-      const actualData = await res.json()
-      dispatch(getIngredientsSuccess(actualData.data))
-    } catch (error) { dispatch(getIngredientsFail(error.message)) }
+export const fetchIngredients = createAsyncThunk(
+  'fetchIngredients',
+  async () => {
+    const {request} = useHttp();
+    return await request(ingredientsApiUrl);
   }
-}
+)
 
-export const sendOrderInfo = ingredients => {
-  return async dispatch => { 
-    dispatch(sendOrder())
-    try {
-      const res = await fetch(orderSubmitUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
-      })
-      if (!res.ok) { throw new Error(`Fetching ${orderSubmitUrl} failed. Status is ${res.status}`) }
-      const actualData = await res.json()
-      dispatch(sendOrderSuccess(actualData))
-    } catch (error) { dispatch(sendOrderFail(error.message)) }
+export const sendOrderInfo = createAsyncThunk(
+  'sendOrderInfo',
+  async (ingredients) => {
+    const {request} = useHttp();
+    return await request(orderSubmitUrl, 'POST', JSON.stringify({ingredients}));
   }
-}
+)

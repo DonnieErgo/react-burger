@@ -30,6 +30,7 @@ const OrderInfo = () => {
         <span className={'text text_type_digits-medium mr-2'}>{totalPrice}</span>
         <CurrencyIcon />
       </div>
+      {/*//@ts-ignore*/}
       <Button onClick={()=>{dispatch(sendOrderInfo(cartIngredients))}} type="primary" size="medium">Оформить заказ</Button>
     </div>
   )
