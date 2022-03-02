@@ -73,10 +73,8 @@ const ingredientsSlice = createSlice({
       state.totalPrice = total
     },
     dragIngredients: (state, { payload }) => {
-      console.log(payload.dragIndex)
-      console.log(payload.hoverIndex)
-      const ingredientsToChange = [...state.cartIngredients]
-      ingredientsToChange.splice(payload.drag, 0, ingredientsToChange.splice(payload.hover, 1)[0])
+      const ingredientsToChange = state.cartIngredients
+      ingredientsToChange[payload.drag] = ingredientsToChange.splice(payload.hover, 1, ingredientsToChange[payload.drag])[0]
       state.cartIngredients = ingredientsToChange
     }
   }

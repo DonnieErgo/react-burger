@@ -23,6 +23,13 @@ const ConstructorItem = ({ item, index }) => {
   const [{ handlerId }, drop] = useDrop({
     accept: 'cartIngredient',
     collect: monitor => ({ handlerId: monitor.getHandlerId() }),
+    drop: item => {
+      // @ts-ignore
+      const dragIndex = item.index;
+      const hoverIndex = index;
+      if (dragIndex==hoverIndex) return;
+      dispatch(dragIngredients({drag: dragIndex, hover: hoverIndex }))
+    },
     hover: (item, monitor) => {
       if (!ref.current) return
       // @ts-ignore
@@ -38,7 +45,7 @@ const ConstructorItem = ({ item, index }) => {
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return
 
-      dispatch(dragIngredients({ dragIndex, hoverIndex }))
+      dispatch(dragIngredients({ drag: dragIndex, hover: hoverIndex }))
       // @ts-ignore
       item.index = hoverIndex
     }

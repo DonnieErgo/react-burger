@@ -45,6 +45,7 @@ const BurgerConstructor = () => {
 
       <ul className={`${styles.main} custom-scroll`}>
         {cartOther.length !== 0 && cartOther.map((item, index) => 
+        // @ts-ignore
           <ConstructorItem item={item} index={index} key={nanoid()} />
         )}
       </ul>
@@ -58,7 +59,7 @@ const BurgerConstructor = () => {
           thumbnail={cartBun.image}/>
       </div>}
 
-      { cartIngredients.length >= 1 && <OrderInfo /> }
+      {/* { cartIngredients.length >= 1 && <OrderInfo /> } */}
 
     </section>
   )
