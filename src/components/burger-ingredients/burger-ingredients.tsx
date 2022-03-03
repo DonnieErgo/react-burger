@@ -1,17 +1,18 @@
-import { useRef, useState, useContext } from 'react';
+import { useRef, useState } from 'react';
 import styles from './burger-ingredients.module.css'
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components'
 import IngredientSection from '../ingredient-section/ingredient-section'
-import { Context } from '../../services/appContext'
+import { useSelector } from 'react-redux'
+import { ingredientsSelector } from '../../services/slices/ingredients'
 
 const BurgerIngredients = () => {
 
-  const { state } = useContext(Context)
-  const ingredients = state.ingredients
+  const { ingredients } = useSelector(ingredientsSelector)
 
   const findIngredients = (ingredientName) => ingredients.filter(prod => prod.type === ingredientName)
 
   const [current, setCurrent] = useState('bun')
+  const scrollRef = useRef(null);
   const mainRef = useRef(null)
   const sauceRef = useRef(null)
   const bunRef = useRef(null)
@@ -21,7 +22,20 @@ const BurgerIngredients = () => {
     ref.current.scrollIntoView({behavior: 'smooth'})
   }
 
-  return ingredients.length && (
+  // Подумать над мемоизацией / useEffect
+  const handleScroll = () => {
+    const scrollWrapPosition = scrollRef.current.getBoundingClientRect().top
+
+    const bunDiff = Math.abs(scrollWrapPosition - bunRef.current.getBoundingClientRect().top)
+    const sauceDiff = Math.abs(scrollWrapPosition - sauceRef.current.getBoundingClientRect().top)
+    const maindDiff = Math.abs(scrollWrapPosition - mainRef.current.getBoundingClientRect().top)
+
+    if (bunDiff < sauceDiff) setCurrent('bun')
+    else if (sauceDiff < maindDiff) setCurrent('sauce')
+    else setCurrent('main')
+  }
+
+  return ingredients && (
     <section className={styles.ingredients}>
 
       <h1 className={'text text_type_main-large mb-5 mt-10'}>Соберите бургер</h1>
@@ -32,7 +46,7 @@ const BurgerIngredients = () => {
         <Tab value='main' active={current === 'main'} onClick={e => handleTabClick(e, mainRef)}>Начинки</Tab>
       </div>
     
-      <div className={`${styles.wrapper} custom-scroll`}>
+      <div ref={scrollRef} onScroll={handleScroll} className={`${styles.wrapper} custom-scroll`}>
         <IngredientSection tabRef={bunRef} name='Булки' ingrList={findIngredients('bun')} />
         <IngredientSection tabRef={sauceRef} name='Соусы' ingrList={findIngredients('sauce')} />
         <IngredientSection tabRef={mainRef} name='Начинки' ingrList={findIngredients('main')} />
