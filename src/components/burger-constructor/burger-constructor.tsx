@@ -15,7 +15,8 @@ const BurgerConstructor = () => {
 
   const [{isOver}, dropTarget] = useDrop({
     accept: 'ingredient',
-    drop: (item:{type: string, _id: string}) => {
+    drop: (item) => {
+    // @ts-ignore
       if (item.type === 'bun') {
         dispatch(deleteIngredientFromCart(item))
         dispatch(addIngredientToCart(item))

@@ -5,7 +5,7 @@ import CurrencyIcon from '../currency-icon/currency-icon'
 import Modal from '../modal/modal'
 import OrderDetails from '../order-details/order-details'
 import { useDispatch, useSelector } from 'react-redux'
-import { sendOrderInfo, ingredientsSelector, closeOrderModal, getTotalPrice } from '../../services/slices/ingredients'
+import { sendOrderInfo, ingredientsSelector, closeOrderModal } from '../../services/slices/ingredients'
 
 const OrderInfo = () => {
   const { cartIngredients, orderName, orderModal } = useSelector(ingredientsSelector)

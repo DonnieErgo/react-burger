@@ -10,8 +10,7 @@ export const initialState = {
   cartIngredients: [],
   orderNumber: 0,
   orderName: '',
-  orderModal: false,
-  totalPrice: 0
+  orderModal: false
 }
 
 const ingredientsSlice = createSlice({
@@ -40,10 +39,7 @@ const ingredientsSlice = createSlice({
     },
     deleteIngredientFromCart: (state, { payload }) => {
       if (payload.type === 'bun') state.cartIngredients = state.cartIngredients.filter(i => i.type !== 'bun')
-      else {
-        const itemIndex = state.cartIngredients.map(i => i._id).indexOf(payload._id)
-        state.cartIngredients = state.cartIngredients.filter((i, ind) => ind !== itemIndex)
-      }
+      else {state.cartIngredients = state.cartIngredients.filter(i => i.id !== payload.id)}
     },
     closeOrderModal: state => { state.orderModal = false },
     dragIngredients: (state, { payload }) => {
@@ -88,7 +84,6 @@ export const {
   addIngredientToCart,
   deleteIngredientFromCart,
   closeOrderModal,
-  getTotalPrice,
   dragIngredients
 } = ingredientsSlice.actions
 
