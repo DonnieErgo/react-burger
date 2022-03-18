@@ -1,0 +1,12 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10vh;
+}
+
+.link {
+  color: #4C4CFF;
+  text-decoration: none;
+  margin-top: 10vh;
+}

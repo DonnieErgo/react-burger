@@ -1,0 +1,7 @@
+.main {
+  max-width: 1240px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 40px;
+  margin: 0 auto;
+}

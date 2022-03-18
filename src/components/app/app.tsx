@@ -1,18 +1,15 @@
 import AppHeader from '../app-header/app-header'
-import styles from './app.module.css'
-import BurgerIngredients from '../burger-ingredients/burger-ingredients'
-import BurgerConstructor from '../burger-constructor/burger-constructor'
-import Loading from '../loading/loading'
-import Err from '../err/err'
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'	
-import { fetchIngredients, ingredientsSelector } from '../../services/slices/ingredients'
+import { useDispatch } from 'react-redux'	
+import { fetchIngredients } from '../../services/slices/ingredients'
+import { DndProvider } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
+import { Route, Switch } from 'react-router-dom';
+import { Login, Home, NotFound } from '../../pages';
+
 
 const App = () => {
   const dispatch = useDispatch()
-  const { loading, error } = useSelector(ingredientsSelector)
   
   useEffect(() => {
     dispatch(fetchIngredients())
@@ -21,16 +18,19 @@ const App = () => {
   return (
     <>
       <AppHeader />
-      <main className={styles.main}>
-        {error && <Err error={error} />}
-        {loading && <Loading />}
-        {!error && !loading && <>
+      <Switch>
+        <Route path="/" exact>
           <DndProvider backend={HTML5Backend}>
-            <BurgerIngredients />
-            <BurgerConstructor />
+            <Home />
           </DndProvider>
-        </>}
-      </main>
+        </Route>
+        <Route path="/login" exact>
+          <Login />
+        </Route>
+      </Switch>
+      <Route>
+        <NotFound />
+        </Route>
     </>
   )
 }

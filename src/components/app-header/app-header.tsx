@@ -10,11 +10,11 @@ const AppHeader = () => {
 
           <div className={styles.nav_menu}>
 
-            <NavItem text={'Конструктор'}>
+            <NavItem route={'/'} text={'Конструктор'}>
               <BurgerIcon type="primary" />
             </NavItem>
 
-            <NavItem text={'Лента заказов'}>
+            <NavItem route={'/feed'} text={'Лента заказов'}>
               <ListIcon type="secondary" />
             </NavItem>
             
@@ -24,7 +24,7 @@ const AppHeader = () => {
 
             <a href={'#'}> <Logo/> </a>
 
-            <NavItem text={'Личный кабинет'}>
+            <NavItem route={'/login'} text={'Личный кабинет'}>
               <ProfileIcon type="secondary" />
             </NavItem>
 
