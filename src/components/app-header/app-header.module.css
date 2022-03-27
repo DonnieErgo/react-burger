@@ -22,3 +22,14 @@
   flex-grow: 0.7;
   justify-content: space-between;
 }
+
+.nav_link {
+  display: flex;
+  flex-flow: row nowrap;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav_link:not(:first-child) {
+  color: #8585AD;
+}

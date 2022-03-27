@@ -7,9 +7,9 @@ import { showIngredientDetails, ingredientsSelector } from '../../services/slice
 
 const BurgerIngredient = ({ item }) => {
 
-  const { cartIngredients } = useSelector(ingredientsSelector)
+  const { cartIngredients, cartBuns } = useSelector(ingredientsSelector)
 
-  const count = cartIngredients.filter(i => i._id === item._id).length
+  const count = cartIngredients.concat(cartBuns).filter(i => i._id === item._id).length
 
   const dispatch = useDispatch()
 

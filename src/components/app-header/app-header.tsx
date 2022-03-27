@@ -1,6 +1,6 @@
 import styles from './app-header.module.css'
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from '@ya.praktikum/react-developer-burger-ui-components'
-import NavItem from '../nav-item/nav-item';
+import { NavLink, Link } from 'react-router-dom'
 
 const AppHeader = () => {
   return (
@@ -10,23 +10,26 @@ const AppHeader = () => {
 
           <div className={styles.nav_menu}>
 
-            <NavItem route={'/'} text={'Конструктор'}>
+            <NavLink to={'/'} className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}>
               <BurgerIcon type="primary" />
-            </NavItem>
+              <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Конструктор</span>
+            </NavLink>
 
-            <NavItem route={'/feed'} text={'Лента заказов'}>
+            <NavLink to={'/feed'} className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}>
               <ListIcon type="secondary" />
-            </NavItem>
+              <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Лента заказов</span>
+            </NavLink>
             
           </div>
           
           <div className={styles.nav_container}>
 
-            <a href={'#'}> <Logo/> </a>
+            <Link to={'/'}> <Logo/> </Link>
 
-            <NavItem route={'/login'} text={'Личный кабинет'}>
+            <NavLink to={'/login'} className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}>
               <ProfileIcon type="secondary" />
-            </NavItem>
+              <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Личный кабинет</span>
+            </NavLink>
 
           </div>
 

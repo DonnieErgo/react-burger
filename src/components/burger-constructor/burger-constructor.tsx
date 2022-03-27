@@ -4,23 +4,21 @@ import OrderInfo from '../order-info/order-info'
 import ConstructorItem from '../constructor-item/constructor-item'
 import { useSelector, useDispatch } from 'react-redux'
 import { useDrop } from 'react-dnd'
-import { ingredientsSelector, addIngredientToCart, deleteIngredientFromCart } from '../../services/slices/ingredients'
+import { ingredientsSelector, addIngredientToCart, deleteIngredientFromCart, addBunsToCart, deleteBunsFromCart } from '../../services/slices/ingredients'
 
 const BurgerConstructor = () => {
 
   const dispatch = useDispatch()
-  const { cartIngredients } = useSelector(ingredientsSelector)
-  const cartBun = cartIngredients.find(item => item.type === 'bun')
+  const { cartIngredients, cartBuns } = useSelector(ingredientsSelector)
+  const cartBun = cartBuns[0]
   const cartOther = cartIngredients.filter(item => item.type !== 'bun')
 
   const [{isOver}, dropTarget] = useDrop({
     accept: 'ingredient',
     drop: (item) => {
     // @ts-ignore
-      if (item.type === 'bun') {
-        dispatch(deleteIngredientFromCart(item))
-        dispatch(addIngredientToCart(item))
-      } else { dispatch(addIngredientToCart(item)) }
+      if (item.type === 'bun') dispatch(addBunsToCart(item))
+      else dispatch(addIngredientToCart(item)) 
     },
     collect: monitor => ({
       isOver: monitor.isOver()
@@ -28,11 +26,10 @@ const BurgerConstructor = () => {
   })
 
   return (
-    <section ref={dropTarget} className={`${styles.constr} mt-25`} 
+    <section
+      ref={dropTarget}
+      className={`${styles.constr} mt-25`} 
       style={{outline: isOver ? '2px solid #4C4CFF' : 'none'}}>
-
-      { (cartIngredients.length === 0) &&
-        <span className='text text_type_main-medium'> Перетащите сюда ингредиенты </span> }
 
       {cartBun && <div className={`${styles.ingr} ml-12 mb-4`}>
         <ConstructorElement
@@ -50,7 +47,7 @@ const BurgerConstructor = () => {
         )}
       </ul>
 
-      {cartBun && <div className={`${styles.ingr} ml-12 mb-10 mt-4`}>
+      {cartBun && <div className={`${styles.ingr} ml-12 mb-6`}>
         <ConstructorElement
           type="bottom"
           isLocked={true}
@@ -59,7 +56,11 @@ const BurgerConstructor = () => {
           thumbnail={cartBun.image}/>
       </div>}
 
-      { cartIngredients.length >= 1 && <OrderInfo /> }
+      { cartIngredients.length === 0 && cartBuns.length === 0 &&
+        <span className='text text_type_main-medium'> Перетащите сюда ингредиенты </span> }
+
+      { (cartIngredients.length >= 1 || cartBuns.length >= 1) &&
+        <OrderInfo /> }
 
     </section>
   )

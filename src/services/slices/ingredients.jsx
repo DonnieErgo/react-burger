@@ -10,7 +10,8 @@ export const initialState = {
   cartIngredients: [],
   orderNumber: 0,
   orderName: '',
-  orderModal: false
+  orderModal: false,
+  cartBuns: []
 }
 
 const ingredientsSlice = createSlice({
@@ -25,6 +26,18 @@ const ingredientsSlice = createSlice({
       state.ingredientDetails = null
       state.activeIngredientDetailsModal = false
     },
+    addBunsToCart: {
+      // @ts-ignore
+      reducer: (state, { payload }) => {
+        state.cartBuns.splice(0, 1, payload)
+      },
+      // @ts-ignore
+      prepare: item => {
+        const id = nanoid()
+        // @ts-ignore
+        return { payload: { id, ...item } }
+      },
+    },
     addIngredientToCart: {
       // @ts-ignore
       reducer: (state, { payload }) => {
@@ -37,13 +50,15 @@ const ingredientsSlice = createSlice({
         return { payload: { id, ...item } }
       },
     },
+    deleteBunsFromCart: state => {
+      state.cartBuns = []
+    },
     deleteIngredientFromCart: (state, { payload }) => {
-      if (payload.type === 'bun') state.cartIngredients = state.cartIngredients.filter(i => i.type !== 'bun')
-      else {state.cartIngredients = state.cartIngredients.filter(i => i.id !== payload.id)}
+      state.cartIngredients = state.cartIngredients.filter(i => i.id !== payload.id)
     },
     closeOrderModal: state => { state.orderModal = false },
     dragIngredients: (state, { payload }) => {
-      const ingredientsToChange = state.cartIngredients.filter(i => i.type !== 'bun')
+      const ingredientsToChange = state.cartIngredients
       ingredientsToChange[payload.drag] = ingredientsToChange.splice(payload.hover, 1, ingredientsToChange[payload.drag])[0]
       state.cartIngredients = ingredientsToChange.concat(state.cartIngredients.filter(i => i.type === 'bun'))
     }
@@ -84,7 +99,9 @@ export const {
   addIngredientToCart,
   deleteIngredientFromCart,
   closeOrderModal,
-  dragIngredients
+  dragIngredients,
+  addBunsToCart,
+  deleteBunsFromCart
 } = ingredientsSlice.actions
 
 // Выяснить как работает ссылка на селектор т.к. сейчас из деструктуризации
@@ -95,6 +112,7 @@ export const ingredientsReducer = ingredientsSlice.reducer
 export const sendOrderInfo = createAsyncThunk(
   'ingredients/sendOrderInfo',
   async (ingredients, { rejectWithValue }) => {
+    console.log(ingredients)
     try {
       const res = await fetch(orderSubmitUrl, {
         method: 'POST',

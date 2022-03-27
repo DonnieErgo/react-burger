@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { sendOrderInfo, ingredientsSelector, closeOrderModal } from '../../services/slices/ingredients'
 
 const OrderInfo = () => {
-  const { cartIngredients, orderName, orderModal } = useSelector(ingredientsSelector)
+  const { cartIngredients, orderName, orderModal, cartBuns } = useSelector(ingredientsSelector)
   const dispatch = useDispatch()
   const [price, setPrice] = useState(0)
 
@@ -16,11 +16,20 @@ const OrderInfo = () => {
 
   const getPrice = () => {
     let total
-    if (cartIngredients.length > 0) {
-      total = (cartIngredients.filter(i => i.type !== 'bun').reduce((a,i) => a + i.price, 0)) + 
-        (cartIngredients.some(i => i.type === 'bun') ? (cartIngredients.find(i => i.type === 'bun').price * 2) : 0)
+    const hasIngredients = cartIngredients.length > 0
+    const hasBuns = cartBuns.length > 0
+    if (hasIngredients || hasBuns ) {
+      total = (hasIngredients ? cartIngredients.reduce((a,i) => a + i.price, 0) : 0) + 
+        (hasBuns ? cartBuns[0].price * 2 : 0)
     } else { total = 0 }
     setPrice(total)
+  }
+
+  const addOrder = () => {
+    // Не бейте, это временная заглушка
+    const order = cartIngredients.concat(cartBuns.concat(cartBuns))
+    // @ts-ignore
+    dispatch(sendOrderInfo(order))
   }
 
   useEffect(() => {
@@ -42,8 +51,7 @@ const OrderInfo = () => {
         <span className={'text text_type_digits-medium mr-2'}>{price}</span>
         <CurrencyIcon />
       </div>
-      {/*//@ts-ignore*/}
-      <Button onClick={()=>{dispatch(sendOrderInfo(cartIngredients))}} type="primary" size="medium">Оформить заказ</Button>
+      <Button onClick={()=>{addOrder()}} type="primary" size="medium">Оформить заказ</Button>
     </div>
   )
 }
