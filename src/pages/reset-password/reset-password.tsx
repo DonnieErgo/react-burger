@@ -1,14 +1,23 @@
-import { Link } from 'react-router-dom'
-import { useState } from 'react';
+import { Redirect, Link, useHistory } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
-import styles from './reset-password.module.css';
+import styles from './reset-password.module.css'
+import { resetPassword, authSelector } from '../../services/slices/auth'
 
 export const ResetPassword = () => {
 
+  const history = useHistory()
+  const dispatch = useDispatch()
+  // const { requestingResetPassword } = useSelector(authSelector)
   const [formData, addFormData] = useState({
-    code: '',
-    password: ''
+    password: '',
+    token: ''
   })
+
+  // useEffect(() => {
+  //   dispatch(resetRequestingForgotPassword())
+  // }, [])
 
   const changeFormData = e => {
     addFormData({
@@ -17,11 +26,25 @@ export const ResetPassword = () => {
     })
   }
 
+  const sendForm = e => {
+    e.preventDefault()
+    // @ts-ignore
+    dispatch(resetPassword(formData)).then(res => {
+      res.payload.success && history.push('/login')
+    })
+  }
+
+  // if (requestingResetPassword) {
+  //   return (
+  //     <Redirect to='/login' />
+  //   )
+  // }
+
   return (
     <div className={styles.main}>
       <div className={styles.cont}>
         <h1 className={`${styles.title} mb-6 text_type_main-medium`}>Восстановление пароля</h1>
-        <form id='forgot-password-form' className={`${styles.form} mb-20`} onSubmit={null}>
+        <form id='forgot-password-form' className={`${styles.form} mb-20`} onSubmit={sendForm}>
           <PasswordInput 
             onChange={changeFormData}
             value={formData.password}
@@ -30,8 +53,8 @@ export const ResetPassword = () => {
             type={'text'}
             placeholder={'Введите код из письма'}
             onChange={changeFormData}
-            value={formData.code}
-            name={'code'}
+            value={formData.token}
+            name={'token'}
             error={false}
             errorText={'Ошибка'}
             size={'default'} />

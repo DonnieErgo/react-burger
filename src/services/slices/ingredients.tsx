@@ -4,7 +4,7 @@ import { ingredientsApiUrl, orderSubmitUrl } from '../../utils/constants'
 export const initialState = {
   ingredients: [],
   loading: false,
-  error: null,
+  error: '',
   ingredientDetails: null,
   activeIngredientDetailsModal: false,
   cartIngredients: [],
@@ -63,12 +63,12 @@ const ingredientsSlice = createSlice({
       state.cartIngredients = ingredientsToChange.concat(state.cartIngredients.filter(i => i.type === 'bun'))
     }
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       .addCase(sendOrderInfo.pending, state => { state.loading = true })
       .addCase(sendOrderInfo.fulfilled, (state, { payload }) => {
         state.loading = false
-        state.error = false
+        state.error = ''
         state.orderNumber = payload.order.number
         state.orderName = payload.name
         state.orderModal = true
@@ -82,7 +82,7 @@ const ingredientsSlice = createSlice({
       .addCase(fetchIngredients.pending, state => { state.loading = true })
       .addCase(fetchIngredients.fulfilled, (state, { payload }) => {
         state.loading = false
-        state.error = false
+        state.error = ''
         state.ingredients = payload.data
       })
       .addCase(fetchIngredients.rejected, (state, { payload }) => {
@@ -109,16 +109,11 @@ export const {
 export const ingredientsSelector = state => state.ingredients
 export const ingredientsReducer = ingredientsSlice.reducer
 
-export const sendOrderInfo = createAsyncThunk(
-  'ingredients/sendOrderInfo',
-  async (ingredients, { rejectWithValue }) => {
-    console.log(ingredients)
+export const fetchIngredients = createAsyncThunk(
+  'ingredients/fetchIngredients',
+  async (data, { rejectWithValue }) => {
     try {
-      const res = await fetch(orderSubmitUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
-      })
+      const res = await fetch(ingredientsApiUrl)
       const actualData = await res.json()
       return actualData
     } catch (err) {
@@ -127,11 +122,16 @@ export const sendOrderInfo = createAsyncThunk(
   }
 )
 
-export const fetchIngredients = createAsyncThunk(
-  'ingredients/fetchIngredients',
-  async (data, { rejectWithValue }) => {
+export const sendOrderInfo = createAsyncThunk(
+  'ingredients/sendOrderInfo',
+  async (ingredients, { rejectWithValue }) => {
     try {
-      const res = await fetch(ingredientsApiUrl)
+      const res = await fetch(orderSubmitUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        // @ts-ignore
+        body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
+      })
       const actualData = await res.json()
       return actualData
     } catch (err) {

@@ -35,7 +35,7 @@ const OrderInfo = () => {
   useEffect(() => {
     // @ts-ignore
     getPrice()
-  }, [cartIngredients])
+  }, [cartIngredients, cartBuns])
 
   return(
 

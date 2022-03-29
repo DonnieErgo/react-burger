@@ -1,10 +1,14 @@
-import { Link } from 'react-router-dom'
+import { Link, useHistory, Redirect } from 'react-router-dom'
 import { useState } from 'react';
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
-import styles from './register.module.css';
+import styles from './register.module.css'
+import { registerUser } from '../../services/slices/auth'
+import { useDispatch } from 'react-redux'
 
 export const Register = () => {
 
+  const dispatch = useDispatch()
+  const history = useHistory()
   const [formData, addFormData] = useState({
     name: '',
     email: '',
@@ -18,11 +22,19 @@ export const Register = () => {
     })
   }
 
+  const reg = e => {
+    e.preventDefault()
+    // @ts-ignore
+    dispatch(registerUser(formData)).then(res => {
+      res.payload.success && history.push('/')
+    })
+  }
+
   return (
     <div className={styles.main}>
       <div className={styles.cont}>
         <h1 className={`${styles.title} mb-6 text_type_main-medium`}>Регистрация</h1>
-        <form id='register-form' className={`${styles.form} mb-20`} onSubmit={null}>
+        <form id='register-form' className={`${styles.form} mb-20`} onSubmit={reg}>
           <Input
             type={'text'}
             placeholder={'Имя'}

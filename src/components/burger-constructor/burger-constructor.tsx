@@ -4,14 +4,13 @@ import OrderInfo from '../order-info/order-info'
 import ConstructorItem from '../constructor-item/constructor-item'
 import { useSelector, useDispatch } from 'react-redux'
 import { useDrop } from 'react-dnd'
-import { ingredientsSelector, addIngredientToCart, deleteIngredientFromCart, addBunsToCart, deleteBunsFromCart } from '../../services/slices/ingredients'
+import { ingredientsSelector, addIngredientToCart, addBunsToCart } from '../../services/slices/ingredients'
 
 const BurgerConstructor = () => {
 
   const dispatch = useDispatch()
   const { cartIngredients, cartBuns } = useSelector(ingredientsSelector)
   const cartBun = cartBuns[0]
-  const cartOther = cartIngredients.filter(item => item.type !== 'bun')
 
   const [{isOver}, dropTarget] = useDrop({
     accept: 'ingredient',
@@ -41,7 +40,7 @@ const BurgerConstructor = () => {
       </div>}
 
       <ul className={`${styles.main} custom-scroll`}>
-        {cartOther.length !== 0 && cartOther.map((item, index) => 
+        {cartIngredients.length !== 0 && cartIngredients.map((item, index) => 
         // @ts-ignore
           <ConstructorItem item={item} index={index} key={item.id} />
         )}
