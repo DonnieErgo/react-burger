@@ -50,5 +50,10 @@
 }
 
 .link:hover {
-  color: #3e3ef5
+  color: #3e3ef5;
+}
+
+.error {
+  text-align: center;
+  color: red;
 }

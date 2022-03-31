@@ -3,32 +3,29 @@ import { useState, useEffect } from 'react'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './forgot-password.module.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { forgotPassword, authSelector } from '../../services/slices/auth'
+import { forgotPassword, authSelector, resetRequestingResetPassword, resetError } from '../../services/slices/auth'
 
 export const ForgotPassword = () => {
 
-  const history = useHistory()
   const dispatch = useDispatch()
-  // const { requestingForgotPassword } = useSelector(authSelector)
+  const { requestingForgotPasswordSuccess } = useSelector(authSelector)
   const [email, addEmail] = useState('')
 
-  // useEffect(() => {
-  //   dispatch(resetRequestingResetPassword())
-  // }, [])
+  useEffect(() => {
+    dispatch(resetRequestingResetPassword())
+  }, [])
 
   const sendForm = e => {
     e.preventDefault()
     // @ts-ignore
-    dispatch(forgotPassword(email)).then(res => {
-      res.payload.success && history.push('/reset-password')
-    })
+    dispatch(forgotPassword(email))
   }
 
-  // if (requestingForgotPassword) {
-  //   return (
-  //     <Redirect to='/reset-password' />
-  //   )
-  // }
+  if (requestingForgotPasswordSuccess) {
+    return (
+      <Redirect to='/reset-password' />
+    )
+  }
 
   return (
     <div className={styles.main}>
@@ -46,10 +43,6 @@ export const ForgotPassword = () => {
             size={'default'} />
           <Button type='primary' size='medium'>Восстановить</Button>
         </form>
-
-        {/* Добавить спан с ошибкой (при регистрации того же юзера) по стейту и самоочищение
-        на остальные страницы тоже */}
-
         <div className={`${styles.line} mb-4 text_type_main-medium`}>
           <span className='text_type_main-default'>Вспомнили пароль?</span>
           <Link to='/login' className={`${styles.link} ml-2 text_type_main-default`}>Войти</Link>

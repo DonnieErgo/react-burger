@@ -1,14 +1,22 @@
-import { Link } from 'react-router-dom'
-import { useState } from 'react';
+import { Redirect, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
-import styles from './login.module.css';
+import styles from './login.module.css'
+import { resetError, authSelector } from '../../services/slices/auth'
 
 export const Login = () => {
 
+  const dispatch = useDispatch()
+  const { error } = useSelector(authSelector)
   const [formData, addFormData] = useState({
     email: '',
     password: ''
   });
+
+  useEffect(() => {
+    dispatch(resetError())
+  }, [])
 
   const changeFormData = e => {
     addFormData({
@@ -35,6 +43,9 @@ export const Login = () => {
             onChange={changeFormData}
             value={formData.password}
             name={'password'} />
+
+          { error && <span className={`${styles.error} text text_type_main-medium mb-4`}>{error}</span> }
+
           <Button type='primary' size='medium'>Войти</Button>
         </form>
         <div className={`${styles.line} mb-4 text_type_main-medium`}>

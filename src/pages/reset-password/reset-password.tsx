@@ -1,23 +1,23 @@
-import { Redirect, Link, useHistory } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './reset-password.module.css'
-import { resetPassword, authSelector } from '../../services/slices/auth'
+import { resetError, resetPassword, authSelector, resetRequestingForgotPassword } from '../../services/slices/auth'
 
 export const ResetPassword = () => {
 
-  const history = useHistory()
   const dispatch = useDispatch()
-  // const { requestingResetPassword } = useSelector(authSelector)
+  const { requestingResetPasswordSuccess, error } = useSelector(authSelector)
   const [formData, addFormData] = useState({
     password: '',
     token: ''
   })
 
-  // useEffect(() => {
-  //   dispatch(resetRequestingForgotPassword())
-  // }, [])
+  useEffect(() => {
+    dispatch(resetRequestingForgotPassword())
+    dispatch(resetError())
+  }, [])
 
   const changeFormData = e => {
     addFormData({
@@ -26,19 +26,21 @@ export const ResetPassword = () => {
     })
   }
 
+  const resetErrorOnFocus = () => {
+    dispatch(resetError())
+  }
+
   const sendForm = e => {
     e.preventDefault()
     // @ts-ignore
-    dispatch(resetPassword(formData)).then(res => {
-      res.payload.success && history.push('/login')
-    })
+    dispatch(resetPassword(formData))
   }
 
-  // if (requestingResetPassword) {
-  //   return (
-  //     <Redirect to='/login' />
-  //   )
-  // }
+  if (requestingResetPasswordSuccess) {
+    return (
+      <Redirect to='/login' />
+    )
+  }
 
   return (
     <div className={styles.main}>
@@ -53,11 +55,15 @@ export const ResetPassword = () => {
             type={'text'}
             placeholder={'Введите код из письма'}
             onChange={changeFormData}
+            onFocus={resetErrorOnFocus}
             value={formData.token}
             name={'token'}
             error={false}
             errorText={'Ошибка'}
             size={'default'} />
+
+          { error && <span className={`${styles.error} text text_type_main-medium mb-4`}>{error}</span> }
+
           <Button type='primary' size='medium'>Сохранить</Button>
         </form>
         <div className={`${styles.line} mb-4 text_type_main-medium`}>

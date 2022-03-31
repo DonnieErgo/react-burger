@@ -1,14 +1,14 @@
-import { Link, useHistory, Redirect } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { useState } from 'react';
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './register.module.css'
-import { registerUser } from '../../services/slices/auth'
-import { useDispatch } from 'react-redux'
+import { registerUser, authSelector, resetError } from '../../services/slices/auth'
+import { useDispatch, useSelector } from 'react-redux'
 
 export const Register = () => {
 
+  const { error, requestingRegisterSuccess } = useSelector(authSelector)
   const dispatch = useDispatch()
-  const history = useHistory()
   const [formData, addFormData] = useState({
     name: '',
     email: '',
@@ -22,12 +22,21 @@ export const Register = () => {
     })
   }
 
+  const resetErrorOnFocus = () => {
+    dispatch(resetError())
+  }
+
   const reg = e => {
     e.preventDefault()
     // @ts-ignore
-    dispatch(registerUser(formData)).then(res => {
-      res.payload.success && history.push('/')
-    })
+    dispatch(registerUser(formData))
+    dispatch(resetError())
+  }
+
+  if(requestingRegisterSuccess) {
+    return (
+      <Redirect to='/' />
+    )
   }
 
   return (
@@ -38,6 +47,7 @@ export const Register = () => {
           <Input
             type={'text'}
             placeholder={'Имя'}
+            onFocus={resetErrorOnFocus}
             onChange={changeFormData}
             value={formData.name}
             name={'name'}
@@ -47,6 +57,7 @@ export const Register = () => {
           <Input
             type={'email'}
             placeholder={'E-mail'}
+            onFocus={resetErrorOnFocus}
             onChange={changeFormData}
             value={formData.email}
             name={'email'}
@@ -57,6 +68,9 @@ export const Register = () => {
             onChange={changeFormData}
             value={formData.password}
             name={'password'} />
+          
+          { error && <span className={`${styles.error} text text_type_main-medium mb-4`}>{error}</span> }
+
           <Button type='primary' size='medium'>Зарегистрироваться</Button>
         </form>
         <div className={`${styles.line} mb-4 text_type_main-medium`}>
