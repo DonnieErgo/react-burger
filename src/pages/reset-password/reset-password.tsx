@@ -8,7 +8,7 @@ import { resetError, resetPassword, authSelector, resetRequestingForgotPassword 
 export const ResetPassword = () => {
 
   const dispatch = useDispatch()
-  const { requestingResetPasswordSuccess, error } = useSelector(authSelector)
+  const { requestingResetPasswordSuccess, error, auth } = useSelector(authSelector)
   const [formData, addFormData] = useState({
     password: '',
     token: ''
@@ -39,6 +39,12 @@ export const ResetPassword = () => {
   if (requestingResetPasswordSuccess) {
     return (
       <Redirect to='/login' />
+    )
+  }
+
+  if (auth) {
+    return (
+      <Redirect to='/' />
     )
   }
 

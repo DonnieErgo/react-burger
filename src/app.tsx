@@ -5,7 +5,7 @@ import { fetchIngredients } from './services/slices/ingredients'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Route, Switch } from 'react-router-dom'
-import { Login, Home, NotFound, Register, ForgotPassword, ResetPassword } from './pages'
+import { Login, Home, NotFound, Register, ForgotPassword, ResetPassword, Profile } from './pages'
 
 
 const App = () => {
@@ -26,6 +26,9 @@ const App = () => {
         </Route>
         <Route path='/login' exact>
           <Login />
+        </Route>
+        <Route path='/profile'>
+          <Profile />
         </Route>
         <Route path='/register' exact>
           <Register />

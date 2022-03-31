@@ -111,7 +111,7 @@ export const ingredientsReducer = ingredientsSlice.reducer
 
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
-  async (data, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const res = await fetch(ingredientsApiUrl)
       const actualData = await res.json()

@@ -1,0 +1,21 @@
+.nav_menu {
+  display: flex;
+  flex-direction: column;
+  max-width: 320px;
+}
+
+.nav_link {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  text-decoration: none;
+}
+
+.nav_link:hover {
+  opacity: 0.8;
+}
+
+.text {
+  opacity: 0.4;
+  max-width: 320px;
+}

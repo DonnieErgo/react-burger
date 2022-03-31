@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './login.module.css'
-import { resetError, authSelector } from '../../services/slices/auth'
+import { resetError, authSelector, loginRequest } from '../../services/slices/auth'
 
 export const Login = () => {
 
   const dispatch = useDispatch()
-  const { error } = useSelector(authSelector)
+  const { error, auth } = useSelector(authSelector)
   const [formData, addFormData] = useState({
     email: '',
     password: ''
@@ -25,11 +25,23 @@ export const Login = () => {
     })
   }
 
+  const sendForm = e => {
+    e.preventDefault()
+    // @ts-ignore
+    dispatch(loginRequest(formData))
+  }
+
+  if (auth) {
+    return (
+      <Redirect to='/' />
+    )
+  }
+
   return (
     <div className={styles.main}>
       <div className={styles.cont}>
         <h1 className={`${styles.title} mb-6 text_type_main-medium`}>Вход</h1>
-        <form id='login-form' className={`${styles.form} mb-20`} onSubmit={null}>
+        <form id='login-form' className={`${styles.form} mb-20`} onSubmit={sendForm}>
           <Input
             type={'email'}
             placeholder={'E-mail'}

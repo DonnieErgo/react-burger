@@ -30,6 +30,10 @@
   color: inherit;
 }
 
+.nav_link:hover {
+  opacity: 0.8;
+}
+
 .nav_link:not(:first-child) {
   color: #8585AD;
 }
