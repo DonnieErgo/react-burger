@@ -1,22 +1,46 @@
 import styles from './profile-info.module.css'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
 import { useState, useEffect } from 'react'
-import { resetError, authSelector } from '../../services/slices/auth'
+import { resetError, authSelector, getUser, updateUser } from '../../services/slices/auth'
 import { useDispatch, useSelector } from 'react-redux'
 
 export const ProfileInfo = () => {
 
   const dispatch = useDispatch()
-  const { error } = useSelector(authSelector)
+  const { error, userData } = useSelector(authSelector)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password:''
   })
 
-  useEffect(() => {
+  const resetErrorOnFocus = () => {
     dispatch(resetError())
-  }, [])
+  }
+
+  const resetForm = e => {
+    e.preventDefault()
+    setFormData({
+      name: userData.name,
+      email: userData.email,
+      password: userData.password
+    })
+  }
+
+  const updateUserInfo = e => {
+    e.preventDefault()
+    // @ts-ignore
+    dispatch(updateUser(formData))
+  }
+
+  useEffect(() => {
+    dispatch(getUser())
+    setFormData({
+      name: userData.name,
+      email: userData.email,
+      password: userData.password
+    })
+  }, [userData])
 
   const changeFormData = e => {
     setFormData({
@@ -26,11 +50,12 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <section className={`${styles.form}`}>
+    <form className={`${styles.form} input_size_default`}>
         <Input
           type={'text'}
           placeholder={'Имя'}
           onChange={changeFormData}
+          onFocus={resetErrorOnFocus}
           icon={'EditIcon'}
           value={formData.name}
           name={'name'}
@@ -41,6 +66,7 @@ export const ProfileInfo = () => {
         <Input
           type={'email'}
           name={'email'}
+          onFocus={resetErrorOnFocus}
           placeholder={'E-mail'}
           onChange={changeFormData}
           icon={'EditIcon'}
@@ -52,6 +78,7 @@ export const ProfileInfo = () => {
         <Input
           type={'password'}
           name={'password'}
+          onFocus={resetErrorOnFocus}
           placeholder={'Пароль'}
           onChange={changeFormData}
           icon={'EditIcon'}
@@ -64,9 +91,9 @@ export const ProfileInfo = () => {
       { error && <span className={`${styles.error} text text_type_main-medium mb-4`}>{error}</span> }
 
       <div className={styles.wrap}>
-        <Button type={"primary"} size={"medium"}>Сохранить</Button>
-        <Button type={"secondary"} size={"medium"} onClick={null}>Отмена</Button>
+        <Button type={"primary"} size={"medium"} onClick={updateUserInfo}>Сохранить</Button>
+        <Button type={"secondary"} size={"medium"} onClick={resetForm}>Отмена</Button>
       </div>
-    </section>
+    </form>
   )
 }

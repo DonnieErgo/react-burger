@@ -26,7 +26,7 @@ const AppHeader = () => {
 
             <Link to={'/'}> <Logo/> </Link>
 
-            <NavLink to={'/login'} className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}>
+            <NavLink to={'/profile'} className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}>
               <ProfileIcon type="secondary" />
               <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Личный кабинет</span>
             </NavLink>

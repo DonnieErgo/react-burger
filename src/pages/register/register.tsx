@@ -1,5 +1,5 @@
 import { Link, Redirect } from 'react-router-dom'
-import { useState } from 'react';
+import { useState, useEffect } from 'react'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './register.module.css'
 import { registerUser, authSelector, resetError } from '../../services/slices/auth'
@@ -7,13 +7,13 @@ import { useDispatch, useSelector } from 'react-redux'
 
 export const Register = () => {
 
-  const { error, requestingRegisterSuccess } = useSelector(authSelector)
+  const { error, auth } = useSelector(authSelector)
   const dispatch = useDispatch()
   const [formData, addFormData] = useState({
     name: '',
     email: '',
     password: ''
-  });
+  })
 
   const changeFormData = e => {
     addFormData({
@@ -21,6 +21,10 @@ export const Register = () => {
       [e.target.name]: e.target.value
     })
   }
+
+  useEffect(() => {
+    dispatch(resetError())
+  }, [])
 
   const resetErrorOnFocus = () => {
     dispatch(resetError())
@@ -30,10 +34,9 @@ export const Register = () => {
     e.preventDefault()
     // @ts-ignore
     dispatch(registerUser(formData))
-    dispatch(resetError())
   }
 
-  if(requestingRegisterSuccess) {
+  if (auth) {
     return (
       <Redirect to='/' />
     )

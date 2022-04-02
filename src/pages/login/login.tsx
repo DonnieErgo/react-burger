@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './login.module.css'
-import { resetError, authSelector, loginRequest } from '../../services/slices/auth'
+import { resetError, authSelector, loginRequest, resetResetPassRequestSuccess, resetForgotPassRequestSuccess } from '../../services/slices/auth'
 
 export const Login = () => {
 
   const dispatch = useDispatch()
   const { error, auth } = useSelector(authSelector)
+
   const [formData, addFormData] = useState({
     email: '',
     password: ''
@@ -16,6 +17,8 @@ export const Login = () => {
 
   useEffect(() => {
     dispatch(resetError())
+    dispatch(resetResetPassRequestSuccess())
+    dispatch(resetForgotPassRequestSuccess())
   }, [])
 
   const changeFormData = e => {
@@ -33,7 +36,7 @@ export const Login = () => {
 
   if (auth) {
     return (
-      <Redirect to='/' />
+      <Redirect to={'/'} />
     )
   }
 

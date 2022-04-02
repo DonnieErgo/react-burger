@@ -6,34 +6,24 @@ export const initialState = {
   auth: false,
   loading: false,
   error: '',
-  userData: {},
-  // Register state
-  requestingRegisterSuccess: false,
-  // ForgotPassword state
-  requestingForgotPasswordSuccess: false,
-  // ResetPassword state
-  requestingResetPasswordSuccess: false,
-  // Login state
-  requestigLoginSuccess: false,
+  userData: {
+    email: '',
+    password: '',
+    name: '',
+  },
+  // Стейты запросов для редиректов
+  forgotPassRequestSuccess: false,
+  resetPassRequestSuccess: false,
 }
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    checkAuth: state => { getCookie('refreshToken') ? getToken() : state.auth = false },
     resetError: state => { state.error = '' },
-    resetRequestingResetPassword: state => { 
-      state.requestingResetPasswordSuccess = false
-    },
-    resetRequestingForgotPassword: state => { 
-      state.requestingForgotPasswordSuccess = false
-    },
-    resetRequestingRegister: state => { 
-      state.requestingRegisterSuccess = false
-    },
-    resetRequestingLogin: state => { 
-      state.requestigLoginSuccess = false
-    }
+    resetForgotPassRequestSuccess: state => { state.forgotPassRequestSuccess = false },
+    resetResetPassRequestSuccess: state => { state.resetPassRequestSuccess = false },
   },
   extraReducers: builder => {
     builder
@@ -42,9 +32,10 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, { payload }) => {
         state.loading = false
         state.error = `Проблема с регистрацией: ${payload.message}`
-        state.auth = true
-        state.requestingRegisterSuccess = true
-        state.userData = payload.user
+        payload.success ? state.auth = true : state.auth = false
+        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
+        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
+        payload.success ? state.userData.password = '' : state.userData.password = ''
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
         setCookie('refreshToken', payload.refreshToken)
       })
@@ -54,9 +45,10 @@ const authSlice = createSlice({
       })
     // ForgotPassword
       .addCase(forgotPassword.pending, state => { state.loading = true })
-      .addCase(forgotPassword.fulfilled, state => {
+      .addCase(forgotPassword.fulfilled, (state, { payload }) => {
         state.loading = false
-        state.requestingForgotPasswordSuccess = true
+        payload.success ? state.forgotPassRequestSuccess = true : state.forgotPassRequestSuccess = false
+        !payload.success ? state.error = `Проблема с отправкой кода: ${payload.message}` : state.error = ''
       })
       .addCase(forgotPassword.rejected, (state, { payload }) => {
         state.loading = false
@@ -66,8 +58,8 @@ const authSlice = createSlice({
       .addCase(resetPassword.pending, state => { state.loading = true })
       .addCase(resetPassword.fulfilled, (state, { payload }) => {
         state.loading = false
-        state.requestingResetPasswordSuccess = true
-        state.error = `Проблема с обновлением пароля: ${payload.message}`
+        payload.success ? state.resetPassRequestSuccess = true : state.resetPassRequestSuccess = false
+        !payload.success ? state.error = `Проблема с обновлением пароля: ${payload.message}` : state.error = ''
       })
       .addCase(resetPassword.rejected, (state, { payload }) => {
         state.loading = false
@@ -77,10 +69,11 @@ const authSlice = createSlice({
       .addCase(loginRequest.pending, state => { state.loading = true })
       .addCase(loginRequest.fulfilled, (state, { payload }) => {
         state.loading = false
-        state.requestigLoginSuccess = true
-        state.auth = true
-        state.userData = payload.user
-        state.error = `Проблема со входом в аккаунт: ${payload.message}`
+        payload.success ? state.auth = true : state.auth = false
+        !payload.success ? state.error = `Проблема со входом в аккаунт: ${payload.message}` : state.error = ''
+        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
+        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
+        payload.success ? state.userData.password = '' : state.userData.password = ''
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
         setCookie('refreshToken', payload.refreshToken)
       })
@@ -93,22 +86,52 @@ const authSlice = createSlice({
       .addCase(logoutRequest.fulfilled, (state, { payload }) => {
         state.loading = false
         state.auth = false
-        state.userData = {}
+        state.userData.name = ''
+        state.userData.email = ''
+        state.userData.password = ''
         state.error = `Ошибка: ${payload.message}`
-        deleteCookie('accessToken');
+        deleteCookie('accessToken')
         deleteCookie('refreshToken')
       })
       .addCase(logoutRequest.rejected, (state, { payload }) => {
         state.loading = false
         state.error = `Ошибка: ${payload}`
       })
+    // Get User
+      .addCase(getUser.pending, state => { state.loading = true })
+      .addCase(getUser.fulfilled, (state, { payload }) => {
+        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
+        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
+        payload.success ? state.userData.password = '' : state.userData.password = ''
+        payload.success ? state.auth = true : state.auth = false
+        !payload.success ? state.error = `Проблема с получением данных пользователя: ${payload.message}` : state.error = ''
+      })
+      .addCase(getUser.rejected, (state, { payload }) => {
+        state.loading = false
+        state.error = `Ошибка: ${payload}`
+      })
+    // Update User
+      .addCase(updateUser.pending, state => { state.loading = true })
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
+        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
+        payload.success ? state.userData.password = '' : state.userData.password = ''
+        payload.success ? state.auth = true : state.auth = false
+        !payload.success ? state.error = `Проблема с обновлением данных пользователя: ${payload.message}` : state.error = ''
+      })
+      .addCase(updateUser.rejected, (state, { payload }) => {
+        state.loading = false
+        state.error = `Ошибка: ${payload}`
+      })
     // Get Token
       .addCase(getToken.pending, state => { state.loading = true })
-      .addCase(getToken.fulfilled, (_, { payload }) => {
+      .addCase(getToken.fulfilled, (state, { payload }) => {
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60})
         setCookie('refreshToken', payload.refreshToken)
+        payload.success ? state.auth = true : state.auth = false
       })
       .addCase(getToken.rejected, (state, { payload }) => {
+        state.auth = false
         state.loading = false
         state.error = `Ошибка: ${payload}`
       })
@@ -116,11 +139,10 @@ const authSlice = createSlice({
 })
 
 export const { 
+  checkAuth,
   resetError,
-  resetRequestingResetPassword,
-  resetRequestingForgotPassword,
-  resetRequestingRegister,
-  resetRequestingLogin
+  resetForgotPassRequestSuccess,
+  resetResetPassRequestSuccess
 } = authSlice.actions
 
 export const authSelector = state => state.auth
@@ -205,10 +227,59 @@ export const logoutRequest = createAsyncThunk(
       const res = await fetch(authUrl + 'logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({token: getCookie('refreshToken')})
+        body: JSON.stringify({'token': getCookie('refreshToken')})
       })
       const actualData = await res.json()
       return actualData
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
+  }
+)
+
+export const getUser = createAsyncThunk(
+  'auth/getUser',
+  // @ts-ignore
+  async (_, { rejectWithValue }) => {
+    try {
+      if (getCookie('accessToken')) {
+        const res = await fetch(authUrl + 'user', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': getCookie('accessToken')}
+        })
+        const actualData = await res.json()
+        return actualData
+      } else {
+        getToken()
+        getUser()
+      }
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
+  }
+)
+
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  // @ts-ignore
+  async (form, { rejectWithValue }) => {
+    try {
+      if (getCookie('accessToken')) {
+        const res = await fetch(authUrl + 'user', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': getCookie('accessToken')},
+          body: JSON.stringify(form)
+        })
+        const actualData = await res.json()
+        return actualData
+      } else {
+        getToken()
+        getUser()
+      }
     } catch (err) {
       return rejectWithValue(err.message)
     }
@@ -223,7 +294,7 @@ export const getToken = createAsyncThunk(
       const res = await fetch(authUrl + 'token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({token: getCookie('refreshToken')})
+        body: JSON.stringify({'token': getCookie('refreshToken')})
       })
       const actualData = await res.json()
       return actualData

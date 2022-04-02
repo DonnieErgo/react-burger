@@ -1,19 +1,15 @@
-import { Redirect, Link, useHistory } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './forgot-password.module.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { forgotPassword, authSelector, resetRequestingResetPassword, resetError } from '../../services/slices/auth'
+import { forgotPassword, authSelector, resetError } from '../../services/slices/auth'
 
 export const ForgotPassword = () => {
 
   const dispatch = useDispatch()
-  const { requestingForgotPasswordSuccess } = useSelector(authSelector)
+  const { forgotPassRequestSuccess, auth } = useSelector(authSelector)
   const [email, addEmail] = useState('')
-
-  useEffect(() => {
-    dispatch(resetRequestingResetPassword())
-  }, [])
 
   const sendForm = e => {
     e.preventDefault()
@@ -21,9 +17,19 @@ export const ForgotPassword = () => {
     dispatch(forgotPassword(email))
   }
 
-  if (requestingForgotPasswordSuccess) {
+  useEffect(() => {
+    dispatch(resetError())
+  }, [])
+
+  if (forgotPassRequestSuccess) {
     return (
       <Redirect to='/reset-password' />
+    )
+  }
+
+  if (auth) {
+    return (
+      <Redirect to='/' />
     )
   }
 
