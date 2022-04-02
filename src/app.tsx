@@ -1,26 +1,37 @@
 import AppHeader from './components/app-header/app-header'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'	
+import { useDispatch, useSelector } from 'react-redux'	
 import { fetchIngredients } from './services/slices/ingredients'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { Route, Switch } from 'react-router-dom'
-import { Login, Home, NotFound, Register, ForgotPassword, ResetPassword, Profile } from './pages'
-import { ProtectedRoute } from '../src/components/protected-route'
-
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import { Login, Home, NotFound, Register, ForgotPassword, ResetPassword, Profile, IngredientPage } from './pages'
+import { ProtectedRoute } from '../src/components/protected-route/protected-route'
+import Modal from './components/modal/modal'
+import IngredientDetails from './components/ingredient-details/ingredient-details'
+import { ingredientsSelector } from './services/slices/ingredients'
 
 const App = () => {
   const dispatch = useDispatch()
-  
+  const history = useHistory()
+  const location = useLocation()
+  const background = location.state && location.state.background
+  const { orderModal } = useSelector(ingredientsSelector)
+
   useEffect(() => {
     dispatch(fetchIngredients())
     // dispatch(checkAuth())
   }, [])
 
+  const closeModal = () => {
+    history.goBack()
+  }
+
   return (
     <>
       <AppHeader />
-      <Switch>
+
+      <Switch location={background || location}>
 
         <Route path='/' exact>
           <DndProvider backend={HTML5Backend}>
@@ -40,19 +51,37 @@ const App = () => {
           <Register />
         </Route>
 
-        <Route path='/forgot-password'>
+        <Route path='/forgot-password' exact>
           <ForgotPassword />
         </Route>
 
-        <Route path='/reset-password'>
+        <Route path='/reset-password' exact>
           <ResetPassword />
         </Route>
+
+        {/* <Route path='/ingredients/:ingredientId' exact>
+          <IngredientPage />
+        </Route> */}
 
         <Route>
           <NotFound />
         </Route>
         
       </Switch>
+
+      {background &&
+        <Route path='/ingredients/:ingredientId'>
+          <Modal onClose={closeModal} title={'Детали ингредиента'}>
+            <IngredientDetails />
+          </Modal>
+        </Route>
+      }
+
+      {!orderModal && 
+        <Route path='/ingredients/:ingredientId'>
+          <IngredientPage />
+        </Route>
+      }
     </>
   )
 }

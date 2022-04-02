@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
-import { authSelector } from '../services/slices/auth'
+import { authSelector } from '../../services/slices/auth'
 import { useSelector } from 'react-redux'
 
 export const ProtectedRoute = ({ children, ...rest }) => {
