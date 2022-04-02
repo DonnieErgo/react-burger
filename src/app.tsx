@@ -2,7 +2,6 @@ import AppHeader from './components/app-header/app-header'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'	
 import { fetchIngredients } from './services/slices/ingredients'
-import { checkAuth, getToken } from './services/slices/auth'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Route, Switch } from 'react-router-dom'
@@ -15,7 +14,7 @@ const App = () => {
   
   useEffect(() => {
     dispatch(fetchIngredients())
-    dispatch(checkAuth())
+    // dispatch(checkAuth())
   }, [])
 
   return (
@@ -52,7 +51,7 @@ const App = () => {
         <Route>
           <NotFound />
         </Route>
-
+        
       </Switch>
     </>
   )

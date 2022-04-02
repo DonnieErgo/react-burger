@@ -277,8 +277,8 @@ export const updateUser = createAsyncThunk(
         const actualData = await res.json()
         return actualData
       } else {
-        getToken()
-        getUser()
+        await getToken()
+        await getUser()
       }
     } catch (err) {
       return rejectWithValue(err.message)
