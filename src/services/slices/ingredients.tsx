@@ -26,9 +26,6 @@ const ingredientsSlice = createSlice({
       state.ingredientDetails = null
       state.activeIngredientDetailsModal = false
     },
-    setIngredient: (state, { payload }) => {
-      state.ingredientDetails = payload
-    },
     addBunsToCart: {
       // @ts-ignore
       reducer: (state, { payload }) => {
@@ -104,8 +101,7 @@ export const {
   closeOrderModal,
   dragIngredients,
   addBunsToCart,
-  deleteBunsFromCart,
-  setIngredient
+  deleteBunsFromCart
 } = ingredientsSlice.actions
 
 // Выяснить как работает ссылка на селектор т.к. сейчас из деструктуризации

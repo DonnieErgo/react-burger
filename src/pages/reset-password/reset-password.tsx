@@ -1,4 +1,4 @@
-import { Redirect, Link } from 'react-router-dom'
+import { Redirect, Link, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
@@ -8,7 +8,8 @@ import { resetError, resetPassword, authSelector } from '../../services/slices/a
 export const ResetPassword = () => {
 
   const dispatch = useDispatch()
-  const { resetPassRequestSuccess, error, auth } = useSelector(authSelector)
+  const { resetPassRequestSuccess, error, auth, forgotPassRequestSuccess } = useSelector(authSelector)
+  const location = useLocation()
   const [formData, addFormData] = useState({
     password: '',
     token: ''
@@ -35,6 +36,12 @@ export const ResetPassword = () => {
     dispatch(resetPassword(formData))
   }
 
+  if (!forgotPassRequestSuccess) {
+    return (
+      <Redirect to='/forgot-password' />
+    )
+  }
+
   if (resetPassRequestSuccess) {
     return (
       <Redirect to='/login' />
@@ -43,7 +50,7 @@ export const ResetPassword = () => {
 
   if (auth) {
     return (
-      <Redirect to='/' />
+      <Redirect to={location?.state?.from || '/' } />
     )
   }
 

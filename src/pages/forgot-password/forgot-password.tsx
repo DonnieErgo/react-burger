@@ -1,4 +1,4 @@
-import { Redirect, Link } from 'react-router-dom'
+import { Redirect, Link, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './forgot-password.module.css'
@@ -10,6 +10,7 @@ export const ForgotPassword = () => {
   const dispatch = useDispatch()
   const { forgotPassRequestSuccess, auth } = useSelector(authSelector)
   const [email, addEmail] = useState('')
+  const location = useLocation()
 
   const sendForm = e => {
     e.preventDefault()
@@ -29,7 +30,7 @@ export const ForgotPassword = () => {
 
   if (auth) {
     return (
-      <Redirect to='/' />
+      <Redirect to={location?.state?.from || '/' } />
     )
   }
 

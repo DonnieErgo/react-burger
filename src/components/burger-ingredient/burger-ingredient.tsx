@@ -25,7 +25,7 @@ const BurgerIngredient = ({ item }) => {
     <li onClick={()=>{dispatch(showIngredientDetails(item))}} >
       <Link ref={dragRef} className={styles.link_wrap}
       to={{ pathname: `/ingredients/${item._id}`, state: { background: location } }}>
-        <a className={`${styles.link} mb-8`} href='#'>
+        <div className={`${styles.link} mb-8`}>
           <img className='pr-4 pl-4 mb-1' src={item.image} alt={item.name}/>
           <div className={`${styles.price} mb-2`}>
             <p className={'text text_type_digits-default pr-2'}>{item.price}</p>
@@ -33,7 +33,7 @@ const BurgerIngredient = ({ item }) => {
           </div>
           <h3 className={`${styles.name} text text_type_main-default`}>{item.name}</h3>
           {count > 0 && <Counter count={count} size='default' />}
-        </a>
+        </div>
       </Link>
     </li>
   )

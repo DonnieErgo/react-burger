@@ -1,4 +1,4 @@
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './register.module.css'
@@ -9,6 +9,7 @@ export const Register = () => {
 
   const { error, auth } = useSelector(authSelector)
   const dispatch = useDispatch()
+  const location = useLocation()
   const [formData, addFormData] = useState({
     name: '',
     email: '',
@@ -38,7 +39,7 @@ export const Register = () => {
 
   if (auth) {
     return (
-      <Redirect to='/' />
+      <Redirect to={location?.state?.from || '/' } />
     )
   }
 

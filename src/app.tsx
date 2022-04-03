@@ -2,6 +2,7 @@ import AppHeader from './components/app-header/app-header'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'	
 import { fetchIngredients } from './services/slices/ingredients'
+import { getUser, authSelector, getToken} from './services/slices/auth'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
@@ -9,18 +10,26 @@ import { Login, Home, NotFound, Register, ForgotPassword, ResetPassword, Profile
 import { ProtectedRoute } from '../src/components/protected-route/protected-route'
 import Modal from './components/modal/modal'
 import IngredientDetails from './components/ingredient-details/ingredient-details'
-import { ingredientsSelector } from './services/slices/ingredients'
+import { getCookie } from './utils/cookies'
 
 const App = () => {
+
+  const { auth } = useSelector(authSelector)
   const dispatch = useDispatch()
   const history = useHistory()
   const location = useLocation()
   const background = location.state && location.state.background
-  const { orderModal } = useSelector(ingredientsSelector)
 
   useEffect(() => {
     dispatch(fetchIngredients())
-    // dispatch(checkAuth())
+
+    if (getCookie('refreshToken')) {
+      dispatch(getUser())
+      if (!auth) {
+        dispatch(getToken())
+        dispatch(getUser())
+      }
+    }
   }, [])
 
   const closeModal = () => {
@@ -59,9 +68,9 @@ const App = () => {
           <ResetPassword />
         </Route>
 
-        {/* <Route path='/ingredients/:ingredientId' exact>
+        <Route path='/ingredients/:ingredientId' exact>
           <IngredientPage />
-        </Route> */}
+        </Route>
 
         <Route>
           <NotFound />
@@ -70,18 +79,13 @@ const App = () => {
       </Switch>
 
       {background &&
-        <Route path='/ingredients/:ingredientId'>
+        <Route path='/ingredients/:ingredientId' exact>
           <Modal onClose={closeModal} title={'Детали ингредиента'}>
             <IngredientDetails />
           </Modal>
         </Route>
       }
 
-      {!orderModal && 
-        <Route path='/ingredients/:ingredientId'>
-          <IngredientPage />
-        </Route>
-      }
     </>
   )
 }

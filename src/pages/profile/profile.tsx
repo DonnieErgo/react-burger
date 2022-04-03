@@ -1,15 +1,14 @@
 import { Switch, Route } from 'react-router-dom'
 import styles from './profile.module.css'
 import { useEffect } from 'react'
-import { resetError, authSelector } from '../../services/slices/auth'
+import { resetError } from '../../services/slices/auth'
 import { ProfileNavigation } from '../../components/profile-navigation/profile-navigation'
 import { ProfileInfo } from '../../components/profile-info/profile-info'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 export const Profile = () => {
 
   const dispatch = useDispatch()
-  const { requestSuccess } = useSelector(authSelector)
 
   useEffect(() => {
     dispatch(resetError())

@@ -13,13 +13,16 @@ export const ProfileInfo = () => {
     email: '',
     password:''
   })
+  const [btns, changeAppearance] = useState(false)
 
-  const resetErrorOnFocus = () => {
+  const onFocus = () => {
     dispatch(resetError())
+    changeAppearance(true)
   }
 
   const resetForm = e => {
     e.preventDefault()
+    changeAppearance(false)
     setFormData({
       name: userData.name,
       email: userData.email,
@@ -29,6 +32,7 @@ export const ProfileInfo = () => {
 
   const updateUserInfo = e => {
     e.preventDefault()
+    changeAppearance(false)
     // @ts-ignore
     dispatch(updateUser(formData))
   }
@@ -50,12 +54,12 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <form className={`${styles.form} input_size_default`}>
+    <form className={`${styles.form} input_size_default`} onFocus={null}>
         <Input
           type={'text'}
           placeholder={'Имя'}
           onChange={changeFormData}
-          onFocus={resetErrorOnFocus}
+          onFocus={onFocus}
           icon={'EditIcon'}
           value={formData.name}
           name={'name'}
@@ -66,7 +70,7 @@ export const ProfileInfo = () => {
         <Input
           type={'email'}
           name={'email'}
-          onFocus={resetErrorOnFocus}
+          onFocus={onFocus}
           placeholder={'E-mail'}
           onChange={changeFormData}
           icon={'EditIcon'}
@@ -78,7 +82,7 @@ export const ProfileInfo = () => {
         <Input
           type={'password'}
           name={'password'}
-          onFocus={resetErrorOnFocus}
+          onFocus={onFocus}
           placeholder={'Пароль'}
           onChange={changeFormData}
           icon={'EditIcon'}
@@ -90,10 +94,10 @@ export const ProfileInfo = () => {
 
       { error && <span className={`${styles.error} text text_type_main-medium mb-4`}>{error}</span> }
 
-      <div className={styles.wrap}>
+      {btns && <div className={styles.wrap}>
         <Button type={"primary"} size={"medium"} onClick={updateUserInfo}>Сохранить</Button>
         <Button type={"secondary"} size={"medium"} onClick={resetForm}>Отмена</Button>
-      </div>
+      </div>}
     </form>
   )
 }

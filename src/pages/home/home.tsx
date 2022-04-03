@@ -3,7 +3,7 @@ import BurgerIngredients from '../../components/burger-ingredients/burger-ingred
 import BurgerConstructor from '../../components/burger-constructor/burger-constructor'
 import Loading from '../../components/loading/loading'
 import Err from '../../components/err/err'
-import { useSelector, useDispatch } from 'react-redux'	
+import { useSelector } from 'react-redux'	
 import { ingredientsSelector } from '../../services/slices/ingredients'
 
 export const Home = () => {
@@ -14,10 +14,10 @@ export const Home = () => {
     {error && <Err error={error} />}
     {loading && <Loading />}
     {!error && !loading && 
-      <main className={styles.main}>
+      <div className={styles.main}>
         <BurgerIngredients />
         <BurgerConstructor />
-      </main>
+      </div>
     }
   </main>
   )

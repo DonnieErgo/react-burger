@@ -20,7 +20,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    checkAuth: state => { getCookie('refreshToken') ? getToken() : state.auth = false },
+    checkAuth: state => { getCookie('refreshToken') ? getUser() : state.auth = false },
     resetError: state => { state.error = '' },
     resetForgotPassRequestSuccess: state => { state.forgotPassRequestSuccess = false },
     resetResetPassRequestSuccess: state => { state.resetPassRequestSuccess = false },
@@ -128,7 +128,7 @@ const authSlice = createSlice({
       .addCase(getToken.fulfilled, (state, { payload }) => {
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60})
         setCookie('refreshToken', payload.refreshToken)
-        payload.success ? state.auth = true : state.auth = false
+        state.auth = true
       })
       .addCase(getToken.rejected, (state, { payload }) => {
         state.auth = false

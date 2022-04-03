@@ -1,26 +1,29 @@
 import IngredientDetails from '../../components/ingredient-details/ingredient-details'
-import { ingredientsSelector, setIngredient } from '../../services/slices/ingredients'
-import { useSelector, useDispatch } from 'react-redux'
-import { useEffect } from 'react'
+import Loading from '../../components/loading/loading'
+import { useSelector } from 'react-redux'
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { ingredientsSelector } from '../../services/slices/ingredients'
+import styles from './ingredient-page.module.css'
 
 export const IngredientPage = () => {
 
-  const dispatch = useDispatch()
-  const { ingredientDetails, cartIngredients, cartBuns } = useSelector(ingredientsSelector)
   const { ingredientId } = useParams()
+  const { loading, ingredients } = useSelector(ingredientsSelector)
 
-  useEffect(() => {
-    if (ingredientId && !ingredientDetails) {
-      const ingrToUse = cartIngredients.concat(cartBuns).find(ingr => ingr._id === ingredientId)
-      dispatch(setIngredient(ingrToUse))
-    }
-  }, [ingredientId])
+  const currentIngredient = useMemo(
+    () => ingredients.find(item => item._id === ingredientId),
+  [ingredients, ingredientId])
 
   return (
-    <section className="pt-20 mt-15">
-      <h1 className="text text_type_main-large">Детали ингредиента</h1>
-      <IngredientDetails />
-    </section>
+    <>
+      {loading && <Loading />}
+      {currentIngredient &&
+        <section className={`${styles.container} pt-20 mt-15`}>
+          <h1 className='text text_type_main-large'>Детали ингредиента</h1>
+          <IngredientDetails />
+        </section>
+      }
+    </>
   )
 }
