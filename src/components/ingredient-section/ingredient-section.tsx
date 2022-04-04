@@ -1,5 +1,7 @@
 import styles from './ingredient-section.module.css'
 import BurgerIngredient from '../burger-ingredient/burger-ingredient'
+import PropTypes from 'prop-types'
+import burgerIngredients from '../../utils/types'
 
 const IngredientSection = ({ tabRef, name, ingrList }) => {
 
@@ -11,6 +13,14 @@ const IngredientSection = ({ tabRef, name, ingrList }) => {
       </ul>
     </section>
   )
+}
+
+IngredientSection.propTypes = {
+  tabRef: PropTypes.oneOfType([
+    PropTypes.func, 
+    PropTypes.shape({ current: PropTypes.any })]),
+  name: PropTypes.string,
+  ingrList: PropTypes.arrayOf(burgerIngredients)
 }
 
 export default IngredientSection

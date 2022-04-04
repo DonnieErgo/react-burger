@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit'
-import { ingredientsApiUrl, orderSubmitUrl } from '../../utils/constants'
+import { baseUrl, checkResponse } from '../../utils/utils'
 
 export const initialState = {
   ingredients: [],
@@ -56,7 +56,11 @@ const ingredientsSlice = createSlice({
     deleteIngredientFromCart: (state, { payload }) => {
       state.cartIngredients = state.cartIngredients.filter(i => i.id !== payload.id)
     },
-    closeOrderModal: state => { state.orderModal = false },
+    closeOrderModal: state => { 
+      state.orderModal = false 
+      state.cartBuns = []
+      state.cartIngredients = []
+    },
     dragIngredients: (state, { payload }) => {
       const ingredientsToChange = state.cartIngredients
       ingredientsToChange[payload.drag] = ingredientsToChange.splice(payload.hover, 1, ingredientsToChange[payload.drag])[0]
@@ -104,38 +108,30 @@ export const {
   deleteBunsFromCart
 } = ingredientsSlice.actions
 
-// Выяснить как работает ссылка на селектор т.к. сейчас из деструктуризации
-// ingredientsSelector я достаю вообще все стейты, возможно надо переписать по аналогии с экшенами
 export const ingredientsSelector = state => state.ingredients
 export const ingredientsReducer = ingredientsSlice.reducer
 
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
   async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(ingredientsApiUrl)
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'ingredients')
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
 
 export const sendOrderInfo = createAsyncThunk(
   'ingredients/sendOrderInfo',
   async (ingredients, { rejectWithValue }) => {
-    try {
-      const res = await fetch(orderSubmitUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        // @ts-ignore
-        body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'orders', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      // @ts-ignore
+      body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )

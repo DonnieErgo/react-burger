@@ -8,7 +8,7 @@ export const ProfileNavigation = () => {
   const dispatch = useDispatch()
 
   const onLogOut = () => {
-    dispatch(logoutRequest());
+    dispatch(logoutRequest())
   }
   
   return (

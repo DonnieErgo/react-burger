@@ -55,10 +55,13 @@ const BurgerConstructor = () => {
           thumbnail={cartBun.image}/>
       </div>}
 
-      { cartIngredients.length === 0 && cartBuns.length === 0 &&
-        <span className='text text_type_main-medium'> Перетащите сюда ингредиенты </span> }
+      { cartIngredients.length === 0 &&
+        <span className='text text_type_main-medium'>Перетащите сюда ингредиенты</span> }
 
-      { (cartIngredients.length >= 1 || cartBuns.length >= 1) &&
+      { cartBuns.length === 0 &&
+        <span className='text text_type_main-medium'>Начать лучше с булочки {'\u2728'}</span> }
+
+      { (cartIngredients.length >= 1 && cartBuns.length >= 1) &&
         <OrderInfo /> }
 
     </section>

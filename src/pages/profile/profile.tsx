@@ -16,14 +16,19 @@ export const Profile = () => {
 
   return (
     <div className={styles.main}>
+      
       <ProfileNavigation />
+
       <Switch>
+
         <Route path="/profile" exact>
           <ProfileInfo />
         </Route>
+
         <Route path="/profile/orders" exact>
           <span className={'text_type_main-default mt-0'}>Скоро здесь будет лента заказов...</span>
         </Route>
+
       </Switch>
     </div>
   )

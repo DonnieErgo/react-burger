@@ -28,12 +28,9 @@
   flex-flow: row nowrap;
   text-decoration: none;
   color: inherit;
+  color: #8585AD;
 }
 
 .nav_link:hover {
   opacity: 0.8;
-}
-
-.nav_link:not(:first-child) {
-  color: #8585AD;
 }

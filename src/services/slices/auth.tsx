@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { authUrl, resetUrl } from '../../utils/constants'
+import { baseUrl, checkResponse } from '../../utils/utils'
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
 
 export const initialState = {
@@ -31,11 +31,11 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, state => { state.loading = true })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
         state.loading = false
-        state.error = `Проблема с регистрацией: ${payload.message}`
-        payload.success ? state.auth = true : state.auth = false
-        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
-        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
-        payload.success ? state.userData.password = '' : state.userData.password = ''
+        // !payload.success ? state.error = `Проблема с регистрацией: ${payload}` : state.error = ''
+        state.auth = true
+        state.userData.name = payload.user.name
+        state.userData.email = payload.user.email
+        state.userData.password = ''
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
         setCookie('refreshToken', payload.refreshToken)
       })
@@ -47,8 +47,7 @@ const authSlice = createSlice({
       .addCase(forgotPassword.pending, state => { state.loading = true })
       .addCase(forgotPassword.fulfilled, (state, { payload }) => {
         state.loading = false
-        payload.success ? state.forgotPassRequestSuccess = true : state.forgotPassRequestSuccess = false
-        !payload.success ? state.error = `Проблема с отправкой кода: ${payload.message}` : state.error = ''
+        state.forgotPassRequestSuccess = true
       })
       .addCase(forgotPassword.rejected, (state, { payload }) => {
         state.loading = false
@@ -56,10 +55,9 @@ const authSlice = createSlice({
       })
     // ResetPassword
       .addCase(resetPassword.pending, state => { state.loading = true })
-      .addCase(resetPassword.fulfilled, (state, { payload }) => {
+      .addCase(resetPassword.fulfilled, state => {
         state.loading = false
-        payload.success ? state.resetPassRequestSuccess = true : state.resetPassRequestSuccess = false
-        !payload.success ? state.error = `Проблема с обновлением пароля: ${payload.message}` : state.error = ''
+        state.resetPassRequestSuccess = true
       })
       .addCase(resetPassword.rejected, (state, { payload }) => {
         state.loading = false
@@ -69,11 +67,10 @@ const authSlice = createSlice({
       .addCase(loginRequest.pending, state => { state.loading = true })
       .addCase(loginRequest.fulfilled, (state, { payload }) => {
         state.loading = false
-        payload.success ? state.auth = true : state.auth = false
-        !payload.success ? state.error = `Проблема со входом в аккаунт: ${payload.message}` : state.error = ''
-        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
-        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
-        payload.success ? state.userData.password = '' : state.userData.password = ''
+        state.auth = true
+        state.userData.name = payload.user.name
+        state.userData.email = payload.user.email
+        state.userData.password = ''
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
         setCookie('refreshToken', payload.refreshToken)
       })
@@ -83,13 +80,12 @@ const authSlice = createSlice({
       })
     // Logout
       .addCase(logoutRequest.pending, state => { state.loading = true })
-      .addCase(logoutRequest.fulfilled, (state, { payload }) => {
+      .addCase(logoutRequest.fulfilled, state => {
         state.loading = false
         state.auth = false
         state.userData.name = ''
         state.userData.email = ''
         state.userData.password = ''
-        state.error = `Ошибка: ${payload.message}`
         deleteCookie('accessToken')
         deleteCookie('refreshToken')
       })
@@ -100,28 +96,34 @@ const authSlice = createSlice({
     // Get User
       .addCase(getUser.pending, state => { state.loading = true })
       .addCase(getUser.fulfilled, (state, { payload }) => {
-        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
-        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
-        payload.success ? state.userData.password = '' : state.userData.password = ''
-        payload.success ? state.auth = true : state.auth = false
-        !payload.success ? state.error = `Проблема с получением данных пользователя: ${payload.message}` : state.error = ''
+        state.userData.name = payload.user.name
+        state.userData.email = payload.user.email
+        state.userData.password = ''
+        state.auth = true
       })
       .addCase(getUser.rejected, (state, { payload }) => {
+        state.userData.name = ''
+        state.userData.email = ''
+        state.userData.password = ''
+        state.auth = false
         state.loading = false
-        state.error = `Ошибка: ${payload}`
+        state.error = `Проблема с получением данных пользователя: ${payload}`
       })
     // Update User
       .addCase(updateUser.pending, state => { state.loading = true })
       .addCase(updateUser.fulfilled, (state, { payload }) => {
-        payload.success ? state.userData.name = payload.user.name : state.userData.name = ''
-        payload.success ? state.userData.email = payload.user.email : state.userData.email = ''
-        payload.success ? state.userData.password = '' : state.userData.password = ''
-        payload.success ? state.auth = true : state.auth = false
-        !payload.success ? state.error = `Проблема с обновлением данных пользователя: ${payload.message}` : state.error = ''
+        state.userData.name = payload.user.name
+        state.userData.email = payload.user.email
+        state.userData.password = ''
+        state.auth = true
       })
       .addCase(updateUser.rejected, (state, { payload }) => {
+        state.userData.name = ''
+        state.userData.email = ''
+        state.userData.password = ''
+        state.auth = false
         state.loading = false
-        state.error = `Ошибка: ${payload}`
+        state.error = `Проблема с обновлением данных пользователя: ${payload}`
       })
     // Get Token
       .addCase(getToken.pending, state => { state.loading = true })
@@ -151,17 +153,14 @@ export const authReducer = authSlice.reducer
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(authUrl + 'register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(form)
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(form)
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
 
@@ -169,17 +168,14 @@ export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   // @ts-ignore
   async (email, { rejectWithValue }) => {
-    try {
-      const res = await fetch(resetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({'email': email})
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'password-reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({'email': email})
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
 
@@ -187,17 +183,14 @@ export const resetPassword = createAsyncThunk(
   'auth/resetPassword',
   // @ts-ignore
   async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(resetUrl + 'reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(form)
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'password-reset/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(form)
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
 
@@ -205,17 +198,14 @@ export const loginRequest = createAsyncThunk(
   'auth/login',
   // @ts-ignore
   async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(authUrl + 'login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(form)
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(form)
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
 
@@ -223,17 +213,14 @@ export const logoutRequest = createAsyncThunk(
   'auth/logoutRequest',
   // @ts-ignore
   async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(authUrl + 'logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({'token': getCookie('refreshToken')})
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'auth/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({'token': getCookie('refreshToken')})
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
 
@@ -243,13 +230,13 @@ export const getUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       if (getCookie('accessToken')) {
-        const res = await fetch(authUrl + 'user', {
+        const res = await fetch(baseUrl + 'auth/user', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             'authorization': getCookie('accessToken')}
         })
-        const actualData = await res.json()
+        const actualData = await checkResponse(res)
         return actualData
       } else {
         getToken()
@@ -265,23 +252,20 @@ export const updateUser = createAsyncThunk(
   'auth/updateUser',
   // @ts-ignore
   async (form, { rejectWithValue }) => {
-    try {
-      if (getCookie('accessToken')) {
-        const res = await fetch(authUrl + 'user', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'authorization': getCookie('accessToken')},
-          body: JSON.stringify(form)
-        })
-        const actualData = await res.json()
-        return actualData
-      } else {
-        await getToken()
-        await getUser()
-      }
-    } catch (err) {
-      return rejectWithValue(err.message)
+    if (getCookie('accessToken')) {
+      const res = await fetch(baseUrl + 'auth/user', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': getCookie('accessToken')},
+        body: JSON.stringify(form)
+      })
+      return await checkResponse(res)
+        .then(res => res)
+        .catch(err => rejectWithValue(err.message))
+    } else {
+      await getToken()
+      await getUser()
     }
   }
 )
@@ -290,16 +274,13 @@ export const getToken = createAsyncThunk(
   'auth/getToken',
   // @ts-ignore
   async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(authUrl + 'token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({'token': getCookie('refreshToken')})
-      })
-      const actualData = await res.json()
-      return actualData
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    const res = await fetch(baseUrl + 'auth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({'token': getCookie('refreshToken')})
+    })
+    return await checkResponse(res)
+      .then(res => res)
+      .catch(err => rejectWithValue(err.message))
   }
 )
