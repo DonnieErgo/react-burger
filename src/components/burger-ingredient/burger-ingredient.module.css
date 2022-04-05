@@ -16,3 +16,8 @@
 .name {
   text-align: center;
 }
+
+.link_wrap {
+  text-decoration: none;
+  color: inherit;
+}

@@ -1,0 +1,9 @@
+.main {
+  width: 100%;
+  max-width: 1240px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 60px;
+  margin: 120px auto 0;
+}

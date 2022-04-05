@@ -1,8 +1,13 @@
 import styles from './app-header.module.css'
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from '@ya.praktikum/react-developer-burger-ui-components'
-import NavItem from '../nav-item/nav-item';
+import { NavLink, Link, useLocation } from 'react-router-dom'
 
 const AppHeader = () => {
+
+  const location = useLocation()
+
+  const profileIcon = () => location.pathname !== '/profile' && location.pathname !== '/profile/orders' ? 'secondary' : 'primary'
+
   return (
     <header className={`${styles.header} pt-4 pb-4`}>
 
@@ -10,23 +15,32 @@ const AppHeader = () => {
 
           <div className={styles.nav_menu}>
 
-            <NavItem text={'Конструктор'}>
-              <BurgerIcon type="primary" />
-            </NavItem>
+            <NavLink to={'/'} exact
+            className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}
+            activeStyle={{ color: '#F2F2F3' }}>
+              <BurgerIcon type={ location.pathname === '/' ? 'primary' : 'secondary' } />
+              <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Конструктор</span>
+            </NavLink>
 
-            <NavItem text={'Лента заказов'}>
-              <ListIcon type="secondary" />
-            </NavItem>
+            <NavLink to={'/feed'}
+            className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}
+            activeStyle={{ color: '#F2F2F3' }}>
+              <ListIcon type={ location.pathname === '/feed' ? 'primary' : 'secondary' } />
+              <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Лента заказов</span>
+            </NavLink>
             
           </div>
           
           <div className={styles.nav_container}>
 
-            <a href={'#'}> <Logo/> </a>
+            <Link to={'/'}> <Logo/> </Link>
 
-            <NavItem text={'Личный кабинет'}>
-              <ProfileIcon type="secondary" />
-            </NavItem>
+            <NavLink to={'/profile'} exact
+            className={`${styles.nav_link} text text_type_main-default ml-2 mr-5 ml-5`}
+            activeStyle={{ color: '#F2F2F3' }}>
+              <ProfileIcon type={profileIcon()} />
+              <span className={`${styles.button_text} ml-2 text text_type_main-default`}>Личный кабинет</span>
+            </NavLink>
 
           </div>
 
