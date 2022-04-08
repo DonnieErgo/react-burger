@@ -31,7 +31,6 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, state => { state.loading = true })
       .addCase(registerUser.fulfilled, (state, { payload }) => {
         state.loading = false
-        // !payload.success ? state.error = `Проблема с регистрацией: ${payload}` : state.error = ''
         state.auth = true
         state.userData.name = payload.user.name
         state.userData.email = payload.user.email

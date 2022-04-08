@@ -1,4 +1,5 @@
 {
+  "homepage": "https://donnieergo.github.io/react-burger/",
   "name": "react-burger",
   "version": "0.1.0",
   "private": true,
@@ -50,7 +51,6 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "./",
   "devDependencies": {
     "gh-pages": "^3.2.3",
     "typescript-plugin-css-modules": "^3.4.0"
