@@ -12,7 +12,7 @@ export const ProfileNavigation = () => {
   }
   
   return (
-    <section className={styles.nav_menu}>
+    <section className={`${styles.nav_menu} mt-30 ml-5`}>
     <NavLink
       to='/profile' exact 
       className={`${styles.nav_link} text text_type_main-medium text_color_inactive`}

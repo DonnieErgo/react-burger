@@ -5,7 +5,6 @@ import { useDrag } from 'react-dnd'
 import { useDispatch, useSelector } from 'react-redux'
 import { showIngredientDetails, ingredientsSelector } from '../../services/slices/ingredients'
 import { Link, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 
 const BurgerIngredient = ({ item }) => {
 
@@ -22,6 +21,7 @@ const BurgerIngredient = ({ item }) => {
   })
 
   return (
+
     <li onClick={()=>{dispatch(showIngredientDetails(item))}} >
       <Link ref={dragRef} className={styles.link_wrap}
       to={{ pathname: `/ingredients/${item._id}`, state: { background: location } }}>
@@ -36,6 +36,7 @@ const BurgerIngredient = ({ item }) => {
         </div>
       </Link>
     </li>
+    
   )
 }
 

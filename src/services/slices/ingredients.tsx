@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit'
-import { baseUrl, checkResponse } from '../../utils/utils'
+import { checkResponse } from '../../utils/utils'
+import { baseUrl } from '../../utils/constants'
 
-export const initialState = {
+const initialState = {
   ingredients: [],
   loading: false,
   error: '',
@@ -11,7 +12,7 @@ export const initialState = {
   orderNumber: 0,
   orderName: '',
   orderModal: false,
-  cartBuns: []
+  cartBuns: [],
 }
 
 const ingredientsSlice = createSlice({
@@ -21,10 +22,6 @@ const ingredientsSlice = createSlice({
     showIngredientDetails: (state, { payload }) => {
       state.ingredientDetails = payload
       state.activeIngredientDetailsModal = true
-    },
-    removeIngredientDetails: state => {
-      state.ingredientDetails = null
-      state.activeIngredientDetailsModal = false
     },
     addBunsToCart: {
       // @ts-ignore
@@ -99,7 +96,6 @@ const ingredientsSlice = createSlice({
 
 export const { 
   showIngredientDetails, 
-  removeIngredientDetails,
   addIngredientToCart,
   deleteIngredientFromCart,
   closeOrderModal,

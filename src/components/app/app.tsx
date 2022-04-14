@@ -1,20 +1,29 @@
 import AppHeader from '../app-header/app-header'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'	
+import { useDispatch } from 'react-redux'	
 import { fetchIngredients } from '../../services/slices/ingredients'
-import { getUser, authSelector, getToken} from '../../services/slices/auth'
+import { getToken } from '../../services/slices/auth'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
-import { Login, Home, NotFound, Register, ForgotPassword, ResetPassword, Profile, IngredientPage } from '../../pages'
 import { ProtectedRoute } from '../protected-route/protected-route'
 import Modal from '../modal/modal'
 import IngredientDetails from '../ingredient-details/ingredient-details'
 import { getCookie } from '../../utils/cookies'
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import { 
+  Login, 
+  Home, 
+  NotFound, 
+  Register, 
+  ForgotPassword, 
+  ResetPassword, 
+  Profile, 
+  IngredientPage, 
+  Feed } from '../../pages'
+
 
 const App = () => {
 
-  const { auth } = useSelector(authSelector)
   const dispatch = useDispatch()
   const history = useHistory()
   const location = useLocation()
@@ -23,12 +32,9 @@ const App = () => {
   useEffect(() => {
     dispatch(fetchIngredients())
 
-    if (getCookie('refreshToken')) {
-      dispatch(getUser())
-      if (!auth) {
-        dispatch(getToken())
-        dispatch(getUser())
-      }
+    // && !background
+    if (getCookie('refreshToken') != null) {
+      dispatch(getToken())
     }
   }, [])
 
@@ -70,6 +76,10 @@ const App = () => {
 
         <Route path='/ingredients/:ingredientId' exact>
           <IngredientPage />
+        </Route>
+
+        <Route path='/feed' exact>
+          <Feed />
         </Route>
 
         <Route>

@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { baseUrl, checkResponse } from '../../utils/utils'
+import { checkResponse } from '../../utils/utils'
+import { baseUrl } from '../../utils/constants'
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
 
-export const initialState = {
+const initialState = {
   auth: false,
   loading: false,
   error: '',
@@ -152,14 +153,16 @@ export const authReducer = authSlice.reducer
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (form, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify(form)
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try {
+      const res = await fetch(baseUrl + 'auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(form)
+      })
+      return await checkResponse(res)
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
   }
 )
 
@@ -167,14 +170,16 @@ export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   // @ts-ignore
   async (email, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'password-reset', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({'email': email})
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try {
+      const res = await fetch(baseUrl + 'password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({'email': email})
+      })
+      return await checkResponse(res)
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
   }
 )
 
@@ -182,14 +187,16 @@ export const resetPassword = createAsyncThunk(
   'auth/resetPassword',
   // @ts-ignore
   async (form, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'password-reset/reset', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify(form)
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try {
+      const res = await fetch(baseUrl + 'password-reset/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(form)
+      })
+      return await checkResponse(res)
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
   }
 )
 
@@ -197,14 +204,16 @@ export const loginRequest = createAsyncThunk(
   'auth/login',
   // @ts-ignore
   async (form, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify(form)
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try {
+      const res = await fetch(baseUrl + 'auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(form)
+      })
+      return await checkResponse(res)
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
   }
 )
 
@@ -212,14 +221,16 @@ export const logoutRequest = createAsyncThunk(
   'auth/logoutRequest',
   // @ts-ignore
   async (_, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'auth/logout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({'token': getCookie('refreshToken')})
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try {
+      const res = await fetch(baseUrl + 'auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({'token': getCookie('refreshToken')})
+      })
+      return await checkResponse(res)
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
   }
 )
 
@@ -228,19 +239,13 @@ export const getUser = createAsyncThunk(
   // @ts-ignore
   async (_, { rejectWithValue }) => {
     try {
-      if (getCookie('accessToken')) {
-        const res = await fetch(baseUrl + 'auth/user', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'authorization': getCookie('accessToken')}
-        })
-        const actualData = await checkResponse(res)
-        return actualData
-      } else {
-        getToken()
-        getUser()
-      }
+      const res = await fetch(baseUrl + 'auth/user', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': getCookie('accessToken')}
+      })
+      return await checkResponse(res)
     } catch (err) {
       return rejectWithValue(err.message)
     }
@@ -251,7 +256,7 @@ export const updateUser = createAsyncThunk(
   'auth/updateUser',
   // @ts-ignore
   async (form, { rejectWithValue }) => {
-    if (getCookie('accessToken')) {
+    try {
       const res = await fetch(baseUrl + 'auth/user', {
         method: 'PATCH',
         headers: {
@@ -260,11 +265,8 @@ export const updateUser = createAsyncThunk(
         body: JSON.stringify(form)
       })
       return await checkResponse(res)
-        .then(res => res)
-        .catch(err => rejectWithValue(err.message))
-    } else {
-      await getToken()
-      await getUser()
+    } catch (err) {
+      return rejectWithValue(err.message)
     }
   }
 )
@@ -273,13 +275,15 @@ export const getToken = createAsyncThunk(
   'auth/getToken',
   // @ts-ignore
   async (_, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'auth/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({'token': getCookie('refreshToken')})
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try {
+      const res = await fetch(baseUrl + 'auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({'token': getCookie('refreshToken')})
+      })
+      return await checkResponse(res)
+    } catch (err) {
+      return rejectWithValue(err.message)
+    }
   }
 )
