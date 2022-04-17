@@ -4,7 +4,7 @@ import { baseUrl } from '../../utils/constants'
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
 
 const initialState = {
-  auth: false,
+  auth: !!getCookie('accessToken'),
   loading: false,
   error: '',
   userData: {
@@ -73,21 +73,25 @@ const authSlice = createSlice({
         state.userData.password = ''
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
         setCookie('refreshToken', payload.refreshToken)
+        sessionStorage.setItem('accessToken', JSON.stringify(payload.accessToken))
       })
       .addCase(loginRequest.rejected, (state, { payload }) => {
+        state.auth = false
         state.loading = false
         state.error = `Проблема со входом в аккаунт: ${payload}`
       })
     // Logout
-      .addCase(logoutRequest.pending, state => { state.loading = true })
+      .addCase(logoutRequest.pending, state => { 
+        state.loading = true
+      })
       .addCase(logoutRequest.fulfilled, state => {
+        deleteCookie('accessToken')
+        deleteCookie('refreshToken')
         state.loading = false
         state.auth = false
         state.userData.name = ''
         state.userData.email = ''
         state.userData.password = ''
-        deleteCookie('accessToken')
-        deleteCookie('refreshToken')
       })
       .addCase(logoutRequest.rejected, (state, { payload }) => {
         state.loading = false
@@ -99,13 +103,11 @@ const authSlice = createSlice({
         state.userData.name = payload.user.name
         state.userData.email = payload.user.email
         state.userData.password = ''
-        state.auth = true
       })
       .addCase(getUser.rejected, (state, { payload }) => {
         state.userData.name = ''
         state.userData.email = ''
         state.userData.password = ''
-        state.auth = false
         state.loading = false
         state.error = `Проблема с получением данных пользователя: ${payload}`
       })
@@ -115,13 +117,11 @@ const authSlice = createSlice({
         state.userData.name = payload.user.name
         state.userData.email = payload.user.email
         state.userData.password = ''
-        state.auth = true
       })
       .addCase(updateUser.rejected, (state, { payload }) => {
         state.userData.name = ''
         state.userData.email = ''
         state.userData.password = ''
-        state.auth = false
         state.loading = false
         state.error = `Проблема с обновлением данных пользователя: ${payload}`
       })
@@ -130,10 +130,8 @@ const authSlice = createSlice({
       .addCase(getToken.fulfilled, (state, { payload }) => {
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60})
         setCookie('refreshToken', payload.refreshToken)
-        state.auth = true
       })
       .addCase(getToken.rejected, (state, { payload }) => {
-        state.auth = false
         state.loading = false
         state.error = `Ошибка: ${payload}`
       })

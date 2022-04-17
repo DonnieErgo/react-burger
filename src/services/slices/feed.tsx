@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   feed: [],
   total: null,
-  totalToday: null
+  totalToday: null,
+  activeOrder: null
 }
 
 const feedSlice = createSlice({
@@ -14,11 +15,14 @@ const feedSlice = createSlice({
       state.feed = payload.orders
       state.total = payload.total
       state.totalToday = payload.totalToday
+    },
+    setActiveOrder: (state, { payload }) => {
+      state.activeOrder = payload
     }
   }
 })
 
-export const { saveData } = feedSlice.actions
+export const { saveData, setActiveOrder } = feedSlice.actions
 
 export const feedSelector = state => state.feed
 export const feedReducer = feedSlice.reducer

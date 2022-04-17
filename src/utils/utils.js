@@ -1,10 +1,15 @@
+import { formatRelative } from 'date-fns'
+import { ru } from 'date-fns/locale'
+
+// Проверяет ответ на fetch-запрос
 export const checkResponse = async (res) => {
   const body = await res.json()
   if (res.ok) { return body } 
   return Promise.reject(body)
 }
 
-export const checkStatus = code => {
+// Возвращает статус заказа в нужном формате
+export const getStatus = code => {
   switch (code) {
     case 'done':
       return 'Выполнен'
@@ -13,4 +18,11 @@ export const checkStatus = code => {
     case 'created':
       return 'Создан'
   }
+}
+
+// Возвращает дату в нужном формате
+export const getDate = date => {
+  if (date) return formatRelative(new Date(date), new Date(), { locale: ru })
+      .split(' в ')
+      .join(', ') + ' i-GMT+3'
 }

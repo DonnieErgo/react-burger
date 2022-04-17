@@ -1,33 +1,27 @@
 import styles from './order-list.module.css'
 import OrderItem from '../order-item/order-item'
 import PropTypes from 'prop-types'
+import { stopFeed } from '../../services/slices/websocket'
 import { useEffect } from 'react'
-import { getFeed, stopFeed } from '../../services/slices/websocket'
-import { feedSelector } from '../../services/slices/feed'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-const OrderList = ({ showStatus }) => {
+const OrderList = ({ showStatus, orders }) => {
+
 
   const dispatch = useDispatch()
-  const { feed } = useSelector(feedSelector)
 
   useEffect(() => {
-    dispatch(getFeed())
-
     return () => {
       dispatch(stopFeed())
     }
-  }, [feed])
+  }, [])
 
   return (
-    // Проверки + убрать ковычки
-    <ul className={`${styles.list} custom-scroll`}> 
+    <ul className={`${styles.link} ${styles.list} custom-scroll`}> 
 
-      <OrderItem showStatus={showStatus} />
-      <OrderItem showStatus={showStatus} />
-      <OrderItem showStatus={showStatus} />
-      <OrderItem showStatus={showStatus} />
-      <OrderItem showStatus={showStatus} />
+      {orders && orders.map(order => (
+          <OrderItem key={order._id} showStatus={showStatus} order={order} />
+      ))}
 
     </ul>
   )
@@ -35,6 +29,7 @@ const OrderList = ({ showStatus }) => {
 
 OrderList.propTypes = {
   showStatus: PropTypes.bool.isRequired,
+  orders: PropTypes.array.isRequired
 }
 
 export default OrderList

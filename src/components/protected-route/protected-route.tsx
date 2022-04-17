@@ -1,5 +1,4 @@
-import { Route } from 'react-router-dom'
-import { Redirect } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import { authSelector } from '../../services/slices/auth'
 import { useSelector } from 'react-redux'
 

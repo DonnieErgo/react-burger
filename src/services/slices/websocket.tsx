@@ -59,7 +59,7 @@ export const getUserFeed = () => {
     dispatch(
       wsStart({
         url: `${wsUrl}/orders`,
-        token: getCookie('accessToken') 
+        token: getCookie('accessToken').slice(7)
       })
     )
   }

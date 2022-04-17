@@ -12,7 +12,7 @@ const BurgerIngredients = () => {
   const findIngredients = (ingredientName) => ingredients.filter(prod => prod.type === ingredientName)
 
   const [current, setCurrent] = useState('bun')
-  const scrollRef = useRef(null);
+  const scrollRef = useRef(null)
   const mainRef = useRef(null)
   const sauceRef = useRef(null)
   const bunRef = useRef(null)

@@ -2,13 +2,12 @@ import AppHeader from '../app-header/app-header'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'	
 import { fetchIngredients } from '../../services/slices/ingredients'
-import { getToken } from '../../services/slices/auth'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { ProtectedRoute } from '../protected-route/protected-route'
 import Modal from '../modal/modal'
 import IngredientDetails from '../ingredient-details/ingredient-details'
-import { getCookie } from '../../utils/cookies'
+import OrderModal from '../order-modal/order-modal'
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import { 
   Login, 
@@ -19,8 +18,8 @@ import {
   ResetPassword, 
   Profile, 
   IngredientPage, 
-  Feed } from '../../pages'
-
+  Feed,
+  OrderPage } from '../../pages'
 
 const App = () => {
 
@@ -31,11 +30,6 @@ const App = () => {
 
   useEffect(() => {
     dispatch(fetchIngredients())
-
-    // && !background
-    if (getCookie('refreshToken') != null) {
-      dispatch(getToken())
-    }
   }, [])
 
   const closeModal = () => {
@@ -78,6 +72,10 @@ const App = () => {
           <IngredientPage />
         </Route>
 
+        <Route path='/feed/:orderId' exact>
+          <OrderPage />
+        </Route>
+
         <Route path='/feed' exact>
           <Feed />
         </Route>
@@ -89,11 +87,23 @@ const App = () => {
       </Switch>
 
       {background &&
-        <Route path='/ingredients/:ingredientId' exact>
-          <Modal onClose={closeModal} title={'Детали ингредиента'}>
-            <IngredientDetails />
-          </Modal>
-        </Route>
+        <Switch>
+          <Route path='/ingredients/:ingredientId' exact>
+            <Modal onClose={closeModal} title={'Детали ингредиента'}>
+              <IngredientDetails />
+            </Modal>
+          </Route>
+          <Route path='/feed/:orderId' exact>
+            <Modal onClose={closeModal} title={''}>
+              <OrderModal/>
+            </Modal>
+          </Route>
+          <Route path='/profile/orders/:orderId' exact>
+            <Modal onClose={closeModal} title={''}>
+              <OrderModal/>
+            </Modal>
+          </Route>
+        </Switch>
       }
 
     </>
