@@ -1,6 +1,6 @@
 import OrderModal from '../../components/order-modal/order-modal'
 import Loading from '../../components/loading/loading'
-import { useParams, matchPath, useLocation } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { feedSelector, setActiveOrder } from '../../services/slices/feed'
@@ -16,15 +16,6 @@ export const OrderPage = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const { orderId } = useParams()
-
-  if (!orderId) {
-    // @ts-ignore
-    orderId = matchPath(location.pathname, {
-      path: '/profile/orders/:orderId',
-      exact: true,
-      strict: false
-    }).params.orderId
-  }
 
   useEffect(() => {
     if (ingredients.length === 0) dispatch(fetchIngredients())

@@ -5,10 +5,11 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import App from './components/app/app'
 import rootReducer from './services/index'
 import { wsMiddleware } from './services/middlwares/wsMiddleware'
+import { actions } from './services/slices/websocket'
 
 const store = configureStore({ 
   reducer: rootReducer,
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(wsMiddleware())
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(wsMiddleware(actions))
 })
 
 render(

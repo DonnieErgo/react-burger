@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { wsUrl } from '../../utils/constants'
 import { getCookie } from '../../utils/cookies'
-import { useAppDispatch } from '../../index';
+import { useAppDispatch } from '../../index'
 
 const initialState = {
   webSocket: null,
@@ -26,7 +26,6 @@ export const wsSlice = createSlice({
     wsError: state => {
       state.wsHasConnected = false
       state.wsHasError = true
-      // обработка ошибки c текстом?
     },
     wsClosed: state => {
       state.wsHasConnected = false
@@ -42,6 +41,7 @@ export const {
   wsError,
   wsClosed
 } = wsSlice.actions
+export const actions = wsSlice.actions
 
 export const wsSelector = state => state.webSocket
 export const websocketReducer = wsSlice.reducer

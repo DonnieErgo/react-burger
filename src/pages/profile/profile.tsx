@@ -27,16 +27,16 @@ export const Profile = () => {
   }, [feed])
 
   useEffect(() => {
-    dispatch(getUserFeed())
     dispatch(resetError())
 
     if (getCookie('refreshToken') && !getCookie('accessToken')) {
       // @ts-ignore
       dispatch(getToken()).then(_ => dispatch(getUser()))
     }
-    if (getCookie('accessToken')) {
-      dispatch(getUser())
-    }
+
+    if (getCookie('accessToken')) dispatch(getUser())
+    
+    dispatch(getUserFeed())
   }, [])
 
   const closeModal = () => {

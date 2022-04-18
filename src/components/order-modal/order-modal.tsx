@@ -1,6 +1,6 @@
 import styles from './order-modal.module.css'
 import Loading from '../../components/loading/loading'
-import { useParams, matchPath, useLocation } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { ingredientsSelector } from '../../services/slices/ingredients'
@@ -26,10 +26,9 @@ const OrderModal = () => {
   useEffect(() => {
     if (ingredients.length === 0) dispatch(fetchIngredients())
 
-    if (!activeOrder) {
-      const actualOrder = feed.find(el => el._id === orderId)
-      dispatch(setActiveOrder(actualOrder))
-    }
+    const actualOrder = feed.find(el => el._id === orderId)
+    dispatch(setActiveOrder(actualOrder))
+    
 
     if (getCookie('refreshToken') != null && getCookie('accessToken') === null) {
       dispatch(getToken())

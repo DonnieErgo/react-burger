@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { checkResponse } from '../../utils/utils'
 import { baseUrl } from '../../utils/constants'
-import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
+import { getCookie, setCookie, deleteCookie } from '../../utils/cookies'
 
 const initialState = {
   auth: !!getCookie('accessToken'),
@@ -73,7 +73,6 @@ const authSlice = createSlice({
         state.userData.password = ''
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
         setCookie('refreshToken', payload.refreshToken)
-        sessionStorage.setItem('accessToken', JSON.stringify(payload.accessToken))
       })
       .addCase(loginRequest.rejected, (state, { payload }) => {
         state.auth = false

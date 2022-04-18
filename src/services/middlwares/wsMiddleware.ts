@@ -1,12 +1,14 @@
-import { wsStart, wsStop, wsSuccess, wsError, wsClosed } from '../slices/websocket'
 import { saveData } from '../slices/feed'
+import { AnyAction } from 'redux'
+import { actions } from '../slices/websocket'
 
-export const wsMiddleware = () => {
+export const wsMiddleware = (wsActions: typeof actions) => {
   return store => {
     let socket = null
 
-    return next => action => {
+    return (next: (action: AnyAction) => void) => (action: AnyAction) => {
 
+      const{ wsStart, wsStop, wsSuccess, wsError, wsClosed } = wsActions
       const { dispatch } = store
       const { type, payload } = action
 
