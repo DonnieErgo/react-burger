@@ -1,0 +1,21 @@
+.main {
+  max-width: 1240px;
+  display: flex;
+  flex-flow: column;
+  margin: 40px auto 0;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  max-height: 75vh;
+  gap: 60px;
+}
+
+.orders {
+  max-width: 600px;
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+  overflow-y: auto;
+}

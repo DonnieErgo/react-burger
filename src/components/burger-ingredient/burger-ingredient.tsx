@@ -2,18 +2,14 @@ import styles from './burger-ingredient.module.css'
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components'
 import PropTypes from 'prop-types'
 import { useDrag } from 'react-dnd'
-import { useDispatch, useSelector } from 'react-redux'
-import { showIngredientDetails, ingredientsSelector } from '../../services/slices/ingredients'
+import { useSelector } from 'react-redux'
+import { ingredientsSelector } from '../../services/slices/ingredients'
 import { Link, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 
 const BurgerIngredient = ({ item }) => {
 
   const { cartIngredients, cartBuns } = useSelector(ingredientsSelector)
-
   const count = cartIngredients.concat(cartBuns).filter(i => i._id === item._id).length
-
-  const dispatch = useDispatch()
   const location = useLocation()
 
   const [, dragRef] = useDrag({
@@ -22,7 +18,8 @@ const BurgerIngredient = ({ item }) => {
   })
 
   return (
-    <li onClick={()=>{dispatch(showIngredientDetails(item))}} >
+
+    <li>
       <Link ref={dragRef} className={styles.link_wrap}
       to={{ pathname: `/ingredients/${item._id}`, state: { background: location } }}>
         <div className={`${styles.link} mb-8`}>
@@ -36,6 +33,7 @@ const BurgerIngredient = ({ item }) => {
         </div>
       </Link>
     </li>
+    
   )
 }
 

@@ -1,31 +1,23 @@
 import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit'
-import { baseUrl, checkResponse } from '../../utils/utils'
+import { checkResponse } from '../../utils/utils'
+import { baseUrl } from '../../utils/constants'
+import { getCookie } from '../../utils/cookies';
 
-export const initialState = {
+const initialState = {
   ingredients: [],
   loading: false,
   error: '',
-  ingredientDetails: null,
-  activeIngredientDetailsModal: false,
   cartIngredients: [],
   orderNumber: 0,
   orderName: '',
   orderModal: false,
-  cartBuns: []
+  cartBuns: [],
 }
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
-    showIngredientDetails: (state, { payload }) => {
-      state.ingredientDetails = payload
-      state.activeIngredientDetailsModal = true
-    },
-    removeIngredientDetails: state => {
-      state.ingredientDetails = null
-      state.activeIngredientDetailsModal = false
-    },
     addBunsToCart: {
       // @ts-ignore
       reducer: (state, { payload }) => {
@@ -98,8 +90,6 @@ const ingredientsSlice = createSlice({
 })
 
 export const { 
-  showIngredientDetails, 
-  removeIngredientDetails,
   addIngredientToCart,
   deleteIngredientFromCart,
   closeOrderModal,
@@ -126,7 +116,10 @@ export const sendOrderInfo = createAsyncThunk(
   async (ingredients, { rejectWithValue }) => {
     const res = await fetch(baseUrl + 'orders', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': getCookie('accessToken')
+      },
       // @ts-ignore
       body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
     })

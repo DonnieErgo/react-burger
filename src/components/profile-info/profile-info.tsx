@@ -1,8 +1,9 @@
 import styles from './profile-info.module.css'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
 import { useState, useEffect } from 'react'
-import { resetError, authSelector, getUser, updateUser } from '../../services/slices/auth'
+import { resetError, authSelector, getUser, updateUser, getToken } from '../../services/slices/auth'
 import { useDispatch, useSelector } from 'react-redux'
+import { getCookie } from '../../utils/cookies'
 
 export const ProfileInfo = () => {
 
@@ -38,7 +39,6 @@ export const ProfileInfo = () => {
   }
 
   useEffect(() => {
-    dispatch(getUser())
     setFormData({
       name: userData.name,
       email: userData.email,
@@ -54,7 +54,7 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <form className={`${styles.form} input_size_default`} onFocus={null}>
+    <form className={`${styles.form} input_size_default mt-30`} onFocus={null}>
         <Input
           type={'text'}
           placeholder={'Имя'}
@@ -95,8 +95,8 @@ export const ProfileInfo = () => {
       { error && <span className={`${styles.error} text text_type_main-medium mb-4`}>{error}</span> }
 
       {btns && <div className={styles.wrap}>
-        <Button type={"primary"} size={"medium"} onClick={updateUserInfo}>Сохранить</Button>
-        <Button type={"secondary"} size={"medium"} onClick={resetForm}>Отмена</Button>
+        <Button type={'primary'} size={'medium'} onClick={updateUserInfo}>Сохранить</Button>
+        <Button type={'secondary'} size={'medium'} onClick={resetForm}>Отмена</Button>
       </div>}
     </form>
   )

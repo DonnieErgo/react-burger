@@ -29,7 +29,7 @@ const OrderInfo = () => {
 
   const addOrder = () => {
     if (auth) {
-      // Временная заглушка, двойной concat.. До чего ты докатился
+    // Временная заглушка
     const order = cartIngredients.concat(cartBuns.concat(cartBuns))
     // @ts-ignore
     dispatch(sendOrderInfo(order))
