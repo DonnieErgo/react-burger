@@ -1,6 +1,5 @@
 import AppHeader from '../app-header/app-header'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'	
 import { fetchIngredients } from '../../services/slices/ingredients'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -9,11 +8,13 @@ import Modal from '../modal/modal'
 import IngredientDetails from '../ingredient-details/ingredient-details'
 import OrderModal from '../order-modal/order-modal'
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import { TLocation } from '../../utils/types'
+import { useAppDispatch } from '../../services/store'
 import { 
   Login, 
   Home, 
   NotFound, 
-  Register, 
+  Register,
   ForgotPassword, 
   ResetPassword, 
   Profile, 
@@ -23,13 +24,14 @@ import {
 
 const App = () => {
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const history = useHistory()
-  const location = useLocation()
+  const location = useLocation<TLocation>()
   const background = location.state && location.state.background
 
   useEffect(() => {
     dispatch(fetchIngredients())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const closeModal = () => {

@@ -1,16 +1,21 @@
 import styles from './burger-ingredient.module.css'
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components'
-import PropTypes from 'prop-types'
 import { useDrag } from 'react-dnd'
-import { useSelector } from 'react-redux'
 import { ingredientsSelector } from '../../services/slices/ingredients'
 import { Link, useLocation } from 'react-router-dom'
+import { FC } from 'react'
+import { TLocation, TIngredient } from '../../utils/types'
+import { useAppSelector } from '../../services/store'
 
-const BurgerIngredient = ({ item }) => {
+type TIngredientProps = {
+  readonly item: TIngredient
+};
 
-  const { cartIngredients, cartBuns } = useSelector(ingredientsSelector)
+const BurgerIngredient: FC<TIngredientProps> = ({ item }) => {
+
+  const { cartIngredients, cartBuns } = useAppSelector(ingredientsSelector)
   const count = cartIngredients.concat(cartBuns).filter(i => i._id === item._id).length
-  const location = useLocation()
+  const location = useLocation<TLocation>()
 
   const [, dragRef] = useDrag({
     type: 'ingredient',
@@ -35,14 +40,6 @@ const BurgerIngredient = ({ item }) => {
     </li>
     
   )
-}
-
-BurgerIngredient.propTypes = {
-  item: PropTypes.shape({
-    image: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired
-  })
 }
 
 export default BurgerIngredient;

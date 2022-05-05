@@ -1,23 +1,28 @@
 import styles from './order-item.module.css'
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components'
-import PropTypes from 'prop-types'
 import { getStatus, getDate } from '../../utils/utils'
-import { useSelector } from 'react-redux'
 import { ingredientsSelector } from '../../services/slices/ingredients'
 import { nanoid } from '@reduxjs/toolkit'
 import { Link, useLocation } from 'react-router-dom'
+import { FC } from 'react'
+import { TLocation, TIngredient, TOrder} from '../../utils/types'
+import { useAppSelector } from '../../services/store'
 
-// также будет передаваться айтем
-const OrderItem = ({ showStatus, order }) => {
+type TOrderItem = {
+  showStatus: boolean;
+  order: TOrder;
+};
 
-  const location = useLocation()
-  const { ingredients } = useSelector(ingredientsSelector)
-  let totalPrice = null
-  let ingredientImgs = []
-  const tooManyIngredients = order.ingredients.length > 6
+const OrderItem: FC<TOrderItem> = ({ showStatus, order }) => {
+
+  const location = useLocation<TLocation>()
+  const { ingredients } = useAppSelector(ingredientsSelector)
+  let totalPrice: number = 0
+  let ingredientImgs: Array<string> = []
+  const tooManyIngredients: boolean = order.ingredients.length > 6
 
   order.ingredients.forEach(item => {
-    let ingr = ingredients.find(el => el._id === item)
+    let ingr: TIngredient = ingredients.find(el => el._id === item)
     if (!ingr) return
 
     ingredientImgs.push(ingr.image_mobile)
@@ -55,11 +60,6 @@ const OrderItem = ({ showStatus, order }) => {
       </li>
 
   )
-}
-
-OrderItem.propTypes = {
-  showStatus: PropTypes.bool.isRequired,
-  order: PropTypes.object.isRequired
 }
 
 export default OrderItem

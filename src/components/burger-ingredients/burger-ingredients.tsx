@@ -1,23 +1,24 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, SetStateAction, MutableRefObject } from 'react';
 import styles from './burger-ingredients.module.css'
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components'
 import IngredientSection from '../ingredient-section/ingredient-section'
-import { useSelector } from 'react-redux'
 import { ingredientsSelector } from '../../services/slices/ingredients'
+import { FC } from 'react'
+import { useAppSelector } from '../../services/store'
 
-const BurgerIngredients = () => {
+const BurgerIngredients: FC = () => {
 
-  const { ingredients } = useSelector(ingredientsSelector)
+  const { ingredients } = useAppSelector(ingredientsSelector)
 
-  const findIngredients = (ingredientName) => ingredients.filter(prod => prod.type === ingredientName)
+  const findIngredients = (ingredientName: string) => ingredients.filter(prod => prod.type === ingredientName)
 
-  const [current, setCurrent] = useState('bun')
-  const scrollRef = useRef(null)
-  const mainRef = useRef(null)
-  const sauceRef = useRef(null)
-  const bunRef = useRef(null)
+  const [current, setCurrent] = useState<string>('bun')
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const mainRef = useRef<HTMLDivElement | null>(null)
+  const sauceRef = useRef<HTMLDivElement | null>(null)
+  const bunRef = useRef<HTMLDivElement | null>(null)
 
-  const handleTabClick = (e, ref) => {
+  const handleTabClick = (e: SetStateAction<string>, ref: MutableRefObject<HTMLDivElement>) => {
     setCurrent(e)
     ref.current.scrollIntoView({behavior: 'smooth'})
   }

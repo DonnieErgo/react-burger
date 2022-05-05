@@ -1,7 +1,20 @@
-import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit'
-import { checkResponse } from '../../utils/utils'
+import { createSlice, createAsyncThunk, nanoid, PayloadAction } from '@reduxjs/toolkit'
+import { customFetch } from '../../utils/utils'
 import { baseUrl } from '../../utils/constants'
-import { getCookie } from '../../utils/cookies';
+import { getCookie } from '../../utils/cookies'
+import { TRootState } from '../rootReducer'
+import { TIngredient } from '../../utils/types'
+
+type TIngridientsState = {
+  ingredients: Array<TIngredient>,
+  loading: boolean,
+  error: string,
+  cartIngredients: Array<TIngredient>,
+  orderNumber: number,
+  orderName: string,
+  orderModal: boolean,
+  cartBuns: Array<TIngredient>,
+};
 
 const initialState = {
   ingredients: [],
@@ -12,33 +25,27 @@ const initialState = {
   orderName: '',
   orderModal: false,
   cartBuns: [],
-}
+} as TIngridientsState
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
     addBunsToCart: {
-      // @ts-ignore
-      reducer: (state, { payload }) => {
+      reducer: (state, { payload }: PayloadAction<TIngredient>) => {
         state.cartBuns.splice(0, 1, payload)
       },
-      // @ts-ignore
       prepare: item => {
         const id = nanoid()
-        // @ts-ignore
         return { payload: { id, ...item } }
       },
     },
     addIngredientToCart: {
-      // @ts-ignore
-      reducer: (state, { payload }) => {
+      reducer: (state, { payload }: PayloadAction<TIngredient>) => {
         state.cartIngredients.push(payload)
       },
-      // @ts-ignore
       prepare: item => {
         const id = nanoid()
-        // @ts-ignore
         return { payload: { id, ...item } }
       },
     },
@@ -59,7 +66,7 @@ const ingredientsSlice = createSlice({
       state.cartIngredients = ingredientsToChange.concat(state.cartIngredients.filter(i => i.type === 'bun'))
     }
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
       .addCase(sendOrderInfo.pending, state => { state.loading = true })
       .addCase(sendOrderInfo.fulfilled, (state, { payload }) => {
@@ -98,33 +105,21 @@ export const {
   deleteBunsFromCart
 } = ingredientsSlice.actions
 
-export const ingredientsSelector = state => state.ingredients
+export const ingredientsSelector = (state: TRootState) => state.ingredients
 export const ingredientsReducer = ingredientsSlice.reducer
 
-export const fetchIngredients = createAsyncThunk(
-  'ingredients/fetchIngredients',
+export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients',
   async (_, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'ingredients')
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+    try { return await customFetch(`${baseUrl}ingredients`)
+    } catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const sendOrderInfo = createAsyncThunk(
-  'ingredients/sendOrderInfo',
-  async (ingredients, { rejectWithValue }) => {
-    const res = await fetch(baseUrl + 'orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'authorization': getCookie('accessToken')
-      },
-      // @ts-ignore
-      body: JSON.stringify({ ingredients: ingredients.map(i => i._id) })
-    })
-    return await checkResponse(res)
-      .then(res => res)
-      .catch(err => rejectWithValue(err.message))
+export const sendOrderInfo = createAsyncThunk('ingredients/sendOrderInfo',
+  async (ingredients: Array<TIngredient>, { rejectWithValue }) => {
+    try { return await customFetch(
+      `${baseUrl}orders`, 'POST', JSON.stringify({ ingredients: ingredients.map(i => i._id) }),
+      {'Content-Type': 'application/json', 'authorization': getCookie('accessToken')})
+    } catch (err) { return rejectWithValue(err.message) }
   }
 )

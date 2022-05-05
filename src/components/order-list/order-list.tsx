@@ -1,19 +1,25 @@
 import styles from './order-list.module.css'
 import OrderItem from '../order-item/order-item'
-import PropTypes from 'prop-types'
 import { stopFeed } from '../../services/slices/websocket'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../services/store'
+import { FC } from 'react'
+import { TOrder} from '../../utils/types'
 
-const OrderList = ({ showStatus, orders }) => {
+type TOrderList = {
+  readonly showStatus: boolean;
+  readonly orders: Array<TOrder>
+};
 
+const OrderList: FC<TOrderList> = ({ showStatus, orders }) => {
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     return () => {
       dispatch(stopFeed())
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -25,11 +31,6 @@ const OrderList = ({ showStatus, orders }) => {
 
     </ul>
   )
-}
-
-OrderList.propTypes = {
-  showStatus: PropTypes.bool.isRequired,
-  orders: PropTypes.array.isRequired
 }
 
 export default OrderList

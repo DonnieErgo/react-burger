@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { resetError, getUser, getToken } from '../../services/slices/auth'
 import { ProfileNavigation } from '../../components/profile-navigation/profile-navigation'
 import { ProfileInfo } from '../../components/profile-info/profile-info'
-import { useDispatch, useSelector } from 'react-redux'
 import { getCookie } from '../../utils/cookies'
 import OrderList from '../../components/order-list/order-list'
 import { getUserFeed } from '../../services/slices/websocket'
@@ -12,15 +11,19 @@ import { feedSelector } from '../../services/slices/feed'
 import Loading from '../../components/loading/loading'
 import OrderModal from '../../components/order-modal/order-modal'
 import Modal from '../../components/modal/modal'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
+import { TLocation, TOrder} from '../../utils/types'
 
-export const Profile = () => {
 
-  const dispatch = useDispatch()
-  const location = useLocation()
+export const Profile: FC = () => {
+
+  const dispatch = useAppDispatch()
+  const location = useLocation<TLocation>()
   const history = useHistory()
   const background = location.state && location.state.background
-  const { feed } = useSelector(feedSelector)
-  const [reversedFeed, setReverse] = useState([])
+  const { feed } = useAppSelector(feedSelector)
+  const [reversedFeed, setReverse] = useState<Array<TOrder>>([])
 
   useEffect(() => {
     if (feed.length > 0) setReverse([...feed].reverse())
@@ -29,14 +32,14 @@ export const Profile = () => {
   useEffect(() => {
     dispatch(resetError())
 
-    if (getCookie('refreshToken') && !getCookie('accessToken')) {
-      // @ts-ignore
+    if (getCookie('refreshToken') != null && getCookie('accessToken') === null) {
       dispatch(getToken()).then(_ => dispatch(getUser()))
     }
 
-    if (getCookie('accessToken')) dispatch(getUser())
+    if (getCookie('accessToken')) dispatch(getToken()).then(_ => dispatch(getUser()))
     
     dispatch(getUserFeed())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const closeModal = () => {
@@ -71,11 +74,11 @@ export const Profile = () => {
         </Route>
       </Switch>
 
-          {background && <Route path='/profile/orders/:orderId' exact>
-            <Modal onClose={closeModal} title={''}>
-              <OrderModal/>
-            </Modal>
-          </Route>}
+      {background && <Route path='/profile/orders/:orderId' exact>
+        <Modal onClose={closeModal} title={''}>
+          <OrderModal/>
+        </Modal>
+      </Route>}
     </div>
   )
 }

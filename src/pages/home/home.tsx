@@ -3,11 +3,12 @@ import BurgerIngredients from '../../components/burger-ingredients/burger-ingred
 import BurgerConstructor from '../../components/burger-constructor/burger-constructor'
 import Loading from '../../components/loading/loading'
 import Err from '../../components/err/err'
-import { useSelector } from 'react-redux'	
 import { ingredientsSelector } from '../../services/slices/ingredients'
+import { useAppSelector } from '../../services/store'
+import { FC } from 'react'
 
-export const Home = () => {
-  const { loading, error } = useSelector(ingredientsSelector)
+export const Home: FC = () => {
+  const { loading, error } = useAppSelector(ingredientsSelector)
 
   return (
     <main className={styles.main}>

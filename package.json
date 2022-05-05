@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-router-dom": "^5.3.3",
     "gh-pages": "^3.2.3",
     "typescript-plugin-css-modules": "^3.4.0"
   }

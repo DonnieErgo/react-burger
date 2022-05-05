@@ -1,7 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { checkResponse } from '../../utils/utils'
 import { baseUrl } from '../../utils/constants'
+import { TRootState } from '../rootReducer'
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies'
+import { TUser, TLoginData, TResetPasswordData, TRegisterData } from '../../utils/types'
+import { customFetch } from '../../utils/utils'
+
+type TAuthState = {
+  auth: boolean,
+  loading: boolean,
+  error: string,
+  userData: {
+    email: string,
+    password: string,
+    name: string,
+  },
+  forgotPassRequestSuccess: boolean,
+  resetPassRequestSuccess: boolean,
+};
 
 const initialState = {
   auth: !!getCookie('accessToken'),
@@ -12,10 +27,9 @@ const initialState = {
     password: '',
     name: '',
   },
-  // Стейты запросов для редиректов
   forgotPassRequestSuccess: false,
   resetPassRequestSuccess: false,
-}
+} as TAuthState
 
 const authSlice = createSlice({
   name: 'auth',
@@ -109,6 +123,7 @@ const authSlice = createSlice({
         state.userData.password = ''
         state.loading = false
         state.error = `Проблема с получением данных пользователя: ${payload}`
+        if (payload === 'jwt expired') getToken()
       })
     // Update User
       .addCase(updateUser.pending, state => { state.loading = true })
@@ -126,7 +141,7 @@ const authSlice = createSlice({
       })
     // Get Token
       .addCase(getToken.pending, state => { state.loading = true })
-      .addCase(getToken.fulfilled, (state, { payload }) => {
+      .addCase(getToken.fulfilled, (_, { payload }) => {
         setCookie('accessToken', payload.accessToken, {expires: 20 * 60})
         setCookie('refreshToken', payload.refreshToken)
       })
@@ -144,143 +159,70 @@ export const {
   resetResetPassRequestSuccess
 } = authSlice.actions
 
-export const authSelector = state => state.auth
+export const authSelector = (state: TRootState) => state.auth
 export const authReducer = authSlice.reducer
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(form)
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+  async (form: TRegisterData, { rejectWithValue }) => {
+    try { return await customFetch(`${baseUrl}auth/register`, 'POST', JSON.stringify(form)) }
+    catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const forgotPassword = createAsyncThunk(
-  'auth/forgotPassword',
-  // @ts-ignore
-  async (email, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'password-reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({'email': email})
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+export const forgotPassword = createAsyncThunk('auth/forgotPassword',
+  async (email: string, { rejectWithValue }) => {
+    try { return await customFetch(`${baseUrl}password-reset`, 'POST', JSON.stringify(email)) }
+    catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const resetPassword = createAsyncThunk(
-  'auth/resetPassword',
-  // @ts-ignore
-  async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'password-reset/reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(form)
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+export const resetPassword = createAsyncThunk('auth/resetPassword',
+  async (form: TResetPasswordData, { rejectWithValue }) => {
+    try { return await customFetch(`${baseUrl}password-reset/reset`, 'POST', JSON.stringify(form)) }
+    catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const loginRequest = createAsyncThunk(
-  'auth/login',
-  // @ts-ignore
-  async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(form)
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+export const loginRequest = createAsyncThunk('auth/login',
+  async (form: TLoginData, { rejectWithValue }) => {
+    try { return await customFetch(`${baseUrl}auth/login`, 'POST', JSON.stringify(form)) }
+    catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const logoutRequest = createAsyncThunk(
-  'auth/logoutRequest',
-  // @ts-ignore
+export const logoutRequest = createAsyncThunk('auth/logoutRequest',
   async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'auth/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({'token': getCookie('refreshToken')})
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    try { return await customFetch(
+      `${baseUrl}auth/logout`, 'POST', 
+      JSON.stringify({ 'token': getCookie('refreshToken') }))
+    } catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const getUser = createAsyncThunk(
-  'auth/getUser',
-  // @ts-ignore
+export const getUser = createAsyncThunk('auth/getUser',
   async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'auth/user', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': getCookie('accessToken')}
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    try { return await customFetch(
+      `${baseUrl}auth/user`, 'GET', null,
+      {'Content-Type': 'application/json', 'authorization': getCookie('accessToken')})
+    } catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const updateUser = createAsyncThunk(
-  'auth/updateUser',
-  // @ts-ignore
-  async (form, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'auth/user', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': getCookie('accessToken')},
-        body: JSON.stringify(form)
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+export const updateUser = createAsyncThunk('auth/updateUser',
+  async (form: TUser, { rejectWithValue }) => {
+    try { return await customFetch(
+      `${baseUrl}auth/user`, 'PATCH', JSON.stringify(form),
+      {'Content-Type': 'application/json', 'authorization': getCookie('accessToken')})
+    } catch (err) { return rejectWithValue(err.message) }
   }
 )
 
-export const getToken = createAsyncThunk(
-  'auth/getToken',
-  // @ts-ignore
+export const getToken = createAsyncThunk('auth/getToken',
   async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(baseUrl + 'auth/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({'token': getCookie('refreshToken')})
-      })
-      return await checkResponse(res)
-    } catch (err) {
-      return rejectWithValue(err.message)
-    }
+    try { return await customFetch(
+      `${baseUrl}auth/token`, 'POST', 
+      JSON.stringify({ 'token': getCookie('refreshToken') }))
+    } catch (err) { return rejectWithValue(err.message) }
   }
 )

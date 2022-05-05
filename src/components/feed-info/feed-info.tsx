@@ -1,11 +1,16 @@
 import styles from './feed-info.module.css'
 import { feedSelector } from '../../services/slices/feed'
-import { useSelector } from 'react-redux'
-import PropTypes from 'prop-types'
+import { FC } from 'react'
+import { useAppSelector } from '../../services/store'
+import { TOrder } from '../../utils/types'
 
-const FeedInfo = ({ orders }) => {
+type TFeedInfo = {
+  orders: Array<TOrder>
+};
 
-  const { total, totalToday } = useSelector(feedSelector)
+const FeedInfo: FC<TFeedInfo> = ({ orders }) => {
+
+  const { total, totalToday } = useAppSelector(feedSelector)
 
   return (
     <section className={`${styles.info} ml-15`}>
@@ -37,10 +42,6 @@ const FeedInfo = ({ orders }) => {
     <p className={`text text_type_digits-large ${styles.highlight}`}>{totalToday}</p>
   </section>
   )
-}
-
-FeedInfo.propTypes = {
-  orders: PropTypes.array.isRequired
 }
 
 export default FeedInfo

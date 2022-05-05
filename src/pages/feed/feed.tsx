@@ -5,17 +5,19 @@ import FeedInfo from '../../components/feed-info/feed-info'
 import { useEffect } from 'react'
 import { getFeed } from '../../services/slices/websocket'
 import { feedSelector } from '../../services/slices/feed'
-import { useDispatch, useSelector } from 'react-redux'
 import { wsSelector } from '../../services/slices/websocket'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
 
-export const Feed = () => {
+export const Feed: FC = () => {
 
-  const dispatch = useDispatch()
-  const { feed } = useSelector(feedSelector)
-  const { wsHasConnected } = useSelector(wsSelector)
+  const dispatch = useAppDispatch()
+  const { feed } = useAppSelector(feedSelector)
+  const { wsHasConnected } = useAppSelector(wsSelector)
 
   useEffect(() => {
     if (!wsHasConnected) dispatch(getFeed())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feed])
 
   return (

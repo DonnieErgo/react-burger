@@ -1,25 +1,27 @@
 import { Redirect, Link, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './forgot-password.module.css'
-import { useDispatch, useSelector } from 'react-redux'
 import { forgotPassword, authSelector, resetError } from '../../services/slices/auth'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
+import { TLocation } from '../../utils/types'
 
-export const ForgotPassword = () => {
+export const ForgotPassword: FC = () => {
 
-  const dispatch = useDispatch()
-  const { forgotPassRequestSuccess, auth } = useSelector(authSelector)
-  const [email, addEmail] = useState('')
-  const location = useLocation()
+  const dispatch = useAppDispatch()
+  const { forgotPassRequestSuccess, auth } = useAppSelector(authSelector)
+  const [email, addEmail] = useState<string>('')
+  const location = useLocation<TLocation>()
 
-  const sendForm = e => {
+  const sendForm = (e: FormEvent) => {
     e.preventDefault()
-    // @ts-ignore
     dispatch(forgotPassword(email))
   }
 
   useEffect(() => {
     dispatch(resetError())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (forgotPassRequestSuccess) {

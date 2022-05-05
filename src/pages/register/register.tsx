@@ -1,22 +1,24 @@
 import { Link, Redirect, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './register.module.css'
 import { registerUser, authSelector, resetError } from '../../services/slices/auth'
-import { useDispatch, useSelector } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
+import { TLocation, TRegisterData } from '../../utils/types'
 
-export const Register = () => {
+export const Register: FC = () => {
 
-  const { error, auth } = useSelector(authSelector)
-  const dispatch = useDispatch()
-  const location = useLocation()
-  const [formData, addFormData] = useState({
+  const { error, auth } = useAppSelector(authSelector)
+  const dispatch = useAppDispatch()
+  const location = useLocation<TLocation>()
+  const [formData, addFormData] = useState<TRegisterData>({
     name: '',
     email: '',
     password: ''
   })
 
-  const changeFormData = e => {
+  const changeFormData = (e: { target: { name: string; value: string } }) => {
     addFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -25,15 +27,15 @@ export const Register = () => {
 
   useEffect(() => {
     dispatch(resetError())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const resetErrorOnFocus = () => {
     dispatch(resetError())
   }
 
-  const reg = e => {
+  const reg = (e: FormEvent) => {
     e.preventDefault()
-    // @ts-ignore
     dispatch(registerUser(formData))
   }
 

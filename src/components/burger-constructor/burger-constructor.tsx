@@ -2,20 +2,21 @@ import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-comp
 import styles from './burger-constructor.module.css'
 import OrderInfo from '../order-info/order-info'
 import ConstructorItem from '../constructor-item/constructor-item'
-import { useSelector, useDispatch } from 'react-redux'
 import { useDrop } from 'react-dnd'
 import { ingredientsSelector, addIngredientToCart, addBunsToCart } from '../../services/slices/ingredients'
+import { FC } from 'react'
+import { TIngredient } from '../../utils/types'
+import { useAppDispatch, useAppSelector } from '../../services/store'
 
-const BurgerConstructor = () => {
+const BurgerConstructor: FC = () => {
 
-  const dispatch = useDispatch()
-  const { cartIngredients, cartBuns } = useSelector(ingredientsSelector)
+  const dispatch = useAppDispatch()
+  const { cartIngredients, cartBuns } = useAppSelector(ingredientsSelector)
   const cartBun = cartBuns[0]
 
   const [{isOver}, dropTarget] = useDrop({
     accept: 'ingredient',
-    drop: (item) => {
-    // @ts-ignore
+    drop: (item: TIngredient) => {
       if (item.type === 'bun') dispatch(addBunsToCart(item))
       else dispatch(addIngredientToCart(item)) 
     },
@@ -40,8 +41,7 @@ const BurgerConstructor = () => {
       </div>}
 
       <ul className={`${styles.main} custom-scroll`}>
-        {cartIngredients.length !== 0 && cartIngredients.map((item, index) => 
-        // @ts-ignore
+        {cartIngredients.length !== 0 && cartIngredients.map((item: TIngredient, index: number) => 
           <ConstructorItem item={item} index={index} key={item.id} />
         )}
       </ul>

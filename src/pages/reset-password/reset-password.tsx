@@ -1,25 +1,28 @@
 import { Redirect, Link, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect, FormEvent } from 'react'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './reset-password.module.css'
 import { resetError, resetPassword, authSelector } from '../../services/slices/auth'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
+import { TLocation, TResetPasswordData } from '../../utils/types'
 
-export const ResetPassword = () => {
+export const ResetPassword: FC = () => {
 
-  const dispatch = useDispatch()
-  const { resetPassRequestSuccess, error, auth, forgotPassRequestSuccess } = useSelector(authSelector)
-  const location = useLocation()
-  const [formData, addFormData] = useState({
+  const dispatch = useAppDispatch()
+  const { resetPassRequestSuccess, error, auth, forgotPassRequestSuccess } = useAppSelector(authSelector)
+  const location = useLocation<TLocation>()
+  const [formData, addFormData] = useState<TResetPasswordData>({
     password: '',
     token: ''
   })
 
   useEffect(() => {
     dispatch(resetError())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const changeFormData = e => {
+  const changeFormData = (e: { target: { name: string; value: string } }) => {
     addFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -30,9 +33,8 @@ export const ResetPassword = () => {
     dispatch(resetError())
   }
 
-  const sendForm = e => {
+  const sendForm = (e: FormEvent) => {
     e.preventDefault()
-    // @ts-ignore
     dispatch(resetPassword(formData))
   }
 

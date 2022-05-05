@@ -4,11 +4,11 @@ import { authReducer } from './slices/auth'
 import { websocketReducer } from './slices/websocket'
 import { feedReducer } from './slices/feed'
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
   auth: authReducer,
   webSocket: websocketReducer,
   feed: feedReducer
 })
 
-export default rootReducer
+export type TRootState = ReturnType<typeof rootReducer>

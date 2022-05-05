@@ -5,21 +5,22 @@ import CurrencyIcon from '../currency-icon/currency-icon'
 import Modal from '../modal/modal'
 import OrderDetails from '../order-details/order-details'
 import { useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import { sendOrderInfo, ingredientsSelector, closeOrderModal } from '../../services/slices/ingredients'
 import { authSelector } from '../../services/slices/auth'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
 
-const OrderInfo = () => {
+const OrderInfo: FC = () => {
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const history = useHistory()
-  const { auth } = useSelector(authSelector)
-  const { cartIngredients, orderName, orderModal, cartBuns } = useSelector(ingredientsSelector)
+  const { auth } = useAppSelector(authSelector)
+  const { cartIngredients, orderName, orderModal, cartBuns } = useAppSelector(ingredientsSelector)
 
-  const fullPrice = useMemo(() => {
-    let total
-    const hasIngredients = cartIngredients.length > 0
-    const hasBuns = cartBuns.length > 0
+  const fullPrice = useMemo<number>(() => {
+    let total: number
+    const hasIngredients: boolean = cartIngredients.length > 0
+    const hasBuns: boolean = cartBuns.length > 0
     if (hasIngredients || hasBuns ) {
       total = (hasIngredients ? cartIngredients.reduce((a,i) => a + i.price, 0) : 0) + 
         (hasBuns ? cartBuns[0].price * 2 : 0)
@@ -29,9 +30,7 @@ const OrderInfo = () => {
 
   const addOrder = () => {
     if (auth) {
-    // Временная заглушка
     const order = cartIngredients.concat(cartBuns.concat(cartBuns))
-    // @ts-ignore
     dispatch(sendOrderInfo(order))
     } else { history.replace({ pathname: '/login' }) }
   }
@@ -40,7 +39,6 @@ const OrderInfo = () => {
     <div className={styles.wrapper}>
 
       {orderModal &&
-      // @ts-ignore
       <Modal onClose={()=>{dispatch(closeOrderModal())}} title={orderName} >
         <OrderDetails />
       </Modal>}
