@@ -29,7 +29,7 @@ Burger ordering app with registration, personal account page and order feed.
 ### Стек
 
 * HTML/CSS
-* TypeScript + JS
+* TypeScript
 * React library
 * Redux + RTK
 * DnD library
@@ -40,14 +40,12 @@ Burger ordering app with registration, personal account page and order feed.
 - Приложение взаимодействует с сервером на всех уровнях, получает юзера и ингредиенты, отправляет авторизацию и заказы
 - Выбор ингредиентов в конструкторе работает посредством dnd
 - Отображаются ошибки в формах при ошибках с сервера или неправильном заполнении
+- Список заказов обновляется при помощи WebSocket
 
 #### Локальный деплой проекта
 1. Клонируем репозиторий
 2. Запуск через `npm start`
 3. Сборка проекта через `npm run build`. Готовый проект находится в папке `build`
 
-#### ToDo:
-- Перенести список ингредиентов из разметки order-modal в компонент
-- Добавить сообщение об успешном обновлении информации в профиле
 
 *Ссылка на GitHub Pages -* https://donnieergo.github.io/react-burger/

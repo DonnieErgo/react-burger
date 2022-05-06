@@ -1,17 +1,21 @@
 import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './constructor-item.module.css'
-import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
 import { deleteIngredientFromCart, dragIngredients } from '../../services/slices/ingredients'
-import { useDrag, useDrop } from "react-dnd"
+import { useDrag, useDrop, DropTargetMonitor, XYCoord } from "react-dnd"
 import { useRef } from 'react'
+import { useAppDispatch } from '../../services/store'
+import { TIngredient } from '../../utils/types'
+import { FC } from 'react'
 
-const ConstructorItem = ({ item, index }) => {
-  const dispatch = useDispatch()
+type TConstructorItemProps = {
+  readonly item: TIngredient,
+  readonly index: number,
+};
 
-  // Нужно найти какое-то читаемое решение по sortable list
+const ConstructorItem: FC<TConstructorItemProps> = ({ item, index }) => {
+  const dispatch = useAppDispatch()
 
-  const ref = useRef(null)
+  const ref = useRef<HTMLLIElement>(null)
 
   const [{ isDragging }, drag] = useDrag({
     type: 'cartIngredient',
@@ -19,20 +23,17 @@ const ConstructorItem = ({ item, index }) => {
     collect: (monitor: any) => ({ isDragging: monitor.isDragging() })
   })
 
-  // @ts-ignore
   const [{ handlerId }, drop] = useDrop({
     accept: 'cartIngredient',
     collect: monitor => ({ handlerId: monitor.getHandlerId() }),
-    drop: item => {
-      // @ts-ignore
+    drop: (item: TIngredient) => {
       const dragIndex = item.index;
       const hoverIndex = index;
-      if (dragIndex==hoverIndex) return;
+      if (dragIndex === hoverIndex) return
       dispatch(dragIngredients({drag: dragIndex, hover: hoverIndex }))
     },
-    hover: (item, monitor) => {
+    hover: (item: TIngredient, monitor: DropTargetMonitor) => {
       if (!ref.current) return
-      // @ts-ignore
       const dragIndex = item.index
       const hoverIndex = index
 
@@ -41,12 +42,11 @@ const ConstructorItem = ({ item, index }) => {
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
       const clientOffset = monitor.getClientOffset()
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return
 
       dispatch(dragIngredients({ drag: dragIndex, hover: hoverIndex }))
-      // @ts-ignore
       item.index = hoverIndex
     }
   })
@@ -69,11 +69,6 @@ const ConstructorItem = ({ item, index }) => {
         handleClose={() =>  dispatch(deleteIngredientFromCart(item))} />
     </li>
   )
-}
-
-ConstructorItem.propTypes = {
-  index: PropTypes.number,
-  item: PropTypes.object
 }
 
 export default ConstructorItem

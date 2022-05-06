@@ -1,18 +1,18 @@
 import { Redirect, Link, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect, FormEvent } from 'react'
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './login.module.css'
-import { getCookie } from '../../utils/cookies'
-import { getToken } from '../../services/slices/auth'
 import { resetError, authSelector, loginRequest, resetResetPassRequestSuccess, resetForgotPassRequestSuccess } from '../../services/slices/auth'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { TLocation, TLoginData } from '../../utils/types'
+import { FC } from 'react'
 
-export const Login = () => {
+export const Login: FC = () => {
 
-  const dispatch = useDispatch()
-  const { error, auth } = useSelector(authSelector)
-  const location = useLocation()
-  const [formData, addFormData] = useState({
+  const dispatch = useAppDispatch()
+  const { error, auth } = useAppSelector(authSelector)
+  const location = useLocation<TLocation>()
+  const [formData, addFormData] = useState<TLoginData>({
     email: '',
     password: ''
   })
@@ -21,18 +21,18 @@ export const Login = () => {
     dispatch(resetError())
     dispatch(resetResetPassRequestSuccess())
     dispatch(resetForgotPassRequestSuccess())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const changeFormData = e => {
+  const changeFormData = (e: { target: { name: string; value: string } }) => {
     addFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
   }
 
-  const sendForm = e => {
+  const sendForm = (e: FormEvent) => {
     e.preventDefault()
-    // @ts-ignore
     dispatch(loginRequest(formData))
   }
 

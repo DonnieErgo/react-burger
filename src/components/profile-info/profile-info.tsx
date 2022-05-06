@@ -1,27 +1,28 @@
 import styles from './profile-info.module.css'
 import { Button, Input } from '@ya.praktikum/react-developer-burger-ui-components'
-import { useState, useEffect } from 'react'
-import { resetError, authSelector, getUser, updateUser, getToken } from '../../services/slices/auth'
-import { useDispatch, useSelector } from 'react-redux'
-import { getCookie } from '../../utils/cookies'
+import { useState, useEffect, FormEvent } from 'react'
+import { resetError, authSelector, updateUser } from '../../services/slices/auth'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { FC } from 'react'
+import { TUser } from '../../utils/types'
 
-export const ProfileInfo = () => {
+export const ProfileInfo: FC = () => {
 
-  const dispatch = useDispatch()
-  const { error, userData } = useSelector(authSelector)
-  const [formData, setFormData] = useState({
+  const dispatch = useAppDispatch()
+  const { error, userData } = useAppSelector(authSelector)
+  const [formData, setFormData] = useState<TUser>({
     name: '',
     email: '',
     password:''
   })
-  const [btns, changeAppearance] = useState(false)
+  const [btns, changeAppearance] = useState<boolean>(false)
 
   const onFocus = () => {
     dispatch(resetError())
     changeAppearance(true)
   }
 
-  const resetForm = e => {
+  const resetForm = (e: { preventDefault: () => void }) => {
     e.preventDefault()
     changeAppearance(false)
     setFormData({
@@ -31,10 +32,9 @@ export const ProfileInfo = () => {
     })
   }
 
-  const updateUserInfo = e => {
+  const updateUserInfo = (e: FormEvent) => {
     e.preventDefault()
     changeAppearance(false)
-    // @ts-ignore
     dispatch(updateUser(formData))
   }
 
@@ -46,7 +46,7 @@ export const ProfileInfo = () => {
     })
   }, [userData])
 
-  const changeFormData = e => {
+  const changeFormData = (e: { target: { name: string; value: string } }) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value

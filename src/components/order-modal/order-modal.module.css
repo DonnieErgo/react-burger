@@ -25,30 +25,6 @@
   gap: 16px;
 }
 
-.ingredient {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-
-.wrap {
-  display: flex;
-  align-items: center;
-}
-
-.ingredient_icon {
-  height: 64px;
-  width: 64px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: double 2px transparent;
-  background-image: linear-gradient(black, black), linear-gradient(to right, #7723C0, #5644F2);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-}
-
 .info{
   display: flex;
   justify-content: space-between;

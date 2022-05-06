@@ -1,11 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { TRootState } from '../rootReducer'
+import { TOrder } from '../../utils/types'
+
+type TFeedState = {
+  feed: Array<TOrder>,
+  total: number,
+  totalToday: number,
+  activeOrder: TOrder
+};
 
 const initialState = {
   feed: [],
-  total: null,
-  totalToday: null,
+  total: 0,
+  totalToday: 0,
   activeOrder: null
-}
+} as TFeedState
 
 const feedSlice = createSlice({
   name: 'feed',
@@ -24,5 +33,5 @@ const feedSlice = createSlice({
 
 export const { saveData, setActiveOrder } = feedSlice.actions
 
-export const feedSelector = state => state.feed
+export const feedSelector = (state: TRootState) => state.feed
 export const feedReducer = feedSlice.reducer

@@ -1,11 +1,12 @@
 import styles from './profile-navigation.module.css'
 import { NavLink } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { logoutRequest } from '../../services/slices/auth'
+import { useAppDispatch } from '../../services/store'
+import { FC } from 'react'
 
-export const ProfileNavigation = () => {
+export const ProfileNavigation: FC = () => {
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const onLogOut = () => {
     dispatch(logoutRequest())
@@ -34,7 +35,7 @@ export const ProfileNavigation = () => {
       </NavLink>
       <span className={`${styles.text} text text_type_main-default text_color_inactive mt-20`}>
       В этом разделе вы можете
-      изменить свои персональные данные</span>
+      изменить свои персональные данные и посмотреть историю заказов</span>
   </section>
   )
 }

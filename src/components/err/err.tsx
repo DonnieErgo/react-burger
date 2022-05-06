@@ -1,14 +1,14 @@
 import styles from './err.module.css'
-import PropTypes from 'prop-types'
+import { FC } from 'react'
 
-const Err = ({ error }) => {
+type TError = {
+  error: string,
+};
+
+const Err: FC<TError> = ({ error }) => {
   return (
     <p className={`text text_type_main-large ${styles.error}`}>{error} </p>
   )
-}
-
-Err.propTypes = {
-  error: PropTypes.string
 }
 
 export default Err

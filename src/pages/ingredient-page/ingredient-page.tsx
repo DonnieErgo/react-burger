@@ -1,17 +1,19 @@
 import IngredientDetails from '../../components/ingredient-details/ingredient-details'
 import Loading from '../../components/loading/loading'
-import { useSelector } from 'react-redux'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { ingredientsSelector } from '../../services/slices/ingredients'
 import styles from './ingredient-page.module.css'
+import { useAppSelector } from '../../services/store'
+import { FC } from 'react'
+import { TIngredient } from '../../utils/types'
 
-export const IngredientPage = () => {
+export const IngredientPage: FC = () => {
 
-  const { ingredientId } = useParams()
-  const { loading, ingredients } = useSelector(ingredientsSelector)
+  const { ingredientId } = useParams<{ ingredientId: string }>()
+  const { loading, ingredients } = useAppSelector(ingredientsSelector)
 
-  const currentIngredient = useMemo(
+  const currentIngredient = useMemo<TIngredient>(
     () => ingredients.find(item => item._id === ingredientId),
   [ingredients, ingredientId])
 

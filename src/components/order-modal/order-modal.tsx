@@ -2,31 +2,33 @@ import styles from './order-modal.module.css'
 import Loading from '../../components/loading/loading'
 import { useParams, useLocation } from 'react-router-dom'
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components'
-import { useSelector, useDispatch } from 'react-redux'
-import { ingredientsSelector } from '../../services/slices/ingredients'
+import { ingredientsSelector, fetchIngredients } from '../../services/slices/ingredients'
 import { useEffect, useState } from 'react'
 import { getCookie } from '../../utils/cookies'
 import { getToken } from '../../services/slices/auth'
-import { fetchIngredients } from '../../services/slices/ingredients'
 import { feedSelector, setActiveOrder } from '../../services/slices/feed'
 import { getFeed, getUserFeed } from '../../services/slices/websocket'
 import { getStatus, getDate } from '../../utils/utils'
+import { FC } from 'react'
+import { useAppDispatch, useAppSelector } from '../../services/store'
+import { TLocation, TIngredient } from '../../utils/types'
+import OrderModalItems from '../../components/order-modal-items/order-modal-items'
 
-const OrderModal = () => {
+const OrderModal: FC = () => {
 
-  const { ingredients } = useSelector(ingredientsSelector)
-  const { feed, activeOrder } = useSelector(feedSelector)
-  const dispatch = useDispatch()
-  const location = useLocation()
+  const { ingredients } = useAppSelector(ingredientsSelector)
+  const { feed, activeOrder } = useAppSelector(feedSelector)
+  const dispatch = useAppDispatch()
+  const location = useLocation<TLocation>()
   const background = location.state && location.state.background
-  const { orderId } = useParams()
-  const [totalPrice, setPrice] = useState(0)
-  const [ingredientsArray, setIngredients] = useState([])
+  const { orderId } = useParams<{ orderId: string }>()
+  const [totalPrice, setPrice] = useState<number>(0)
+  const [ingredientsArray, setIngredients] = useState<Array<TIngredient>>([])
 
   useEffect(() => {
     if (ingredients.length === 0) dispatch(fetchIngredients())
 
-    const actualOrder = feed.find(el => el._id === orderId)
+    const actualOrder: object = feed.find(el => el._id === orderId)
     dispatch(setActiveOrder(actualOrder))
     
 
@@ -41,13 +43,13 @@ const OrderModal = () => {
         dispatch(getFeed())
       }
     }
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ingredients, feed, location.pathname])
 
   useEffect(() => {
-    let totalPrice = 0
-    let ingrArray = []
-    let countedIngrArray = []
+    let totalPrice: number = 0
+    let ingrArray: Array<TIngredient> = []
+    let countedIngrArray: Array<TIngredient> = []
 
     if (activeOrder) activeOrder.ingredients.forEach(item => {
       let ingr = ingredients.find(el => el._id === item)
@@ -80,21 +82,9 @@ const OrderModal = () => {
           </span>
           <span className={'text text_type_main-medium mb-6'}>Состав:</span>
           <ul className={`${styles.ingredients} mb-10 pr-6 `}>
-            {/* Переделать в компонент */}
-            {ingredientsArray && ingredientsArray.map(el => (
-              <li key={el._id} className={styles.ingredient}>
-                <div className={styles.wrap}>
-                  <img className={`${styles.ingredient_icon} mr-4`} src={el.image_mobile} alt='картинка'/>
-                  <span className={`text text_type_main-default`}>{el.name}</span>
-                </div>
-                <div className={styles.wrap}>
-                  <span className={'text text_type_digits-default'}>{el.count}</span>
-                  <span className={'text text_type_main-default mr-2 ml-2'}>x</span>
-                  <span className={'text text_type_digits-default mr-2'}>{el.price}</span>
-                  <CurrencyIcon type='primary'/>
-                </div>
-              </li>
-            ))}
+            {ingredientsArray && ingredientsArray.map((ingredient: TIngredient) => (
+              <OrderModalItems key={ingredient._id} ingredient={ingredient} />))
+            }
           </ul>
           <div className={styles.info}>
             <span className={'text text_type_main-default text_color_inactive'}>{getDate(activeOrder.createdAt)}</span>

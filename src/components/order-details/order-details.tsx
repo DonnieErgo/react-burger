@@ -1,9 +1,10 @@
 import done from '../../images/done.png'
 import { ingredientsSelector } from '../../services/slices/ingredients'
-import { useSelector } from 'react-redux'
+import { FC } from 'react'
+import { useAppSelector } from '../../services/store'
 
-const OrderDetails = () => {
-  const { orderNumber } = useSelector(ingredientsSelector)
+const OrderDetails: FC = () => {
+  const { orderNumber } = useAppSelector(ingredientsSelector)
 
   return (
     <>

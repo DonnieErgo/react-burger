@@ -3,8 +3,8 @@ import { AnyAction } from 'redux'
 import { actions } from '../slices/websocket'
 
 export const wsMiddleware = (wsActions: typeof actions) => {
-  return store => {
-    let socket = null
+  return (store: { dispatch: any }) => {
+    let socket: WebSocket | null = null
 
     return (next: (action: AnyAction) => void) => (action: AnyAction) => {
 
@@ -13,7 +13,7 @@ export const wsMiddleware = (wsActions: typeof actions) => {
       const { type, payload } = action
 
       if (type === wsStart.type) {
-        const wsUrl = payload.token ? `${payload.url}?token=${payload.token}` : `${payload.url}`   
+        const wsUrl: string = payload.token ? `${payload.url}?token=${payload.token}` : `${payload.url}`   
         socket = new WebSocket(wsUrl)
       }
 

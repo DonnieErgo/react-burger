@@ -1,18 +1,59 @@
-import PropTypes from "prop-types";
+import { Location } from 'history'
 
-const burgerIngredients = PropTypes.shape({
-  _id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  proteins: PropTypes.number.isRequired,
-  fat: PropTypes.number.isRequired,
-  carbohydrates: PropTypes.number.isRequired,
-  calories: PropTypes.number.isRequired,
-  price: PropTypes.number.isRequired,
-  image: PropTypes.string.isRequired,
-  image_mobile: PropTypes.string.isRequired,
-  image_large: PropTypes.string.isRequired,
-  __v: PropTypes.number,
-})
+export type TIngredient = {
+  readonly id?: string;
+  readonly _id: string;
+  readonly name: string
+  readonly type: string;
+  readonly proteins: number;
+  readonly fat: number;
+  readonly carbohydrates: number;
+  readonly calories: number;
+  readonly price: number;
+  readonly image: string;
+  readonly image_mobile: string;
+  readonly image_large: string;
+  readonly __v: number;
+  index: number;
+  count: number;
+};
 
-export default burgerIngredients
+export type TOrder = {
+  readonly order: {
+    readonly ingredients: Object[];
+    readonly number: number;
+  };
+  readonly number: number;
+  readonly name: string;
+  readonly status: string;
+  readonly createdAt: string;
+  readonly ingredients: Object[];
+  readonly _id: string;
+};
+
+export type TLocation = {
+  background?: Location<TLocation>;
+  from?: {pathname: string};
+};
+
+export type TUser = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export type TLoginData = {
+  email: string;
+  password: string;
+};
+
+export type TResetPasswordData = {
+  token: string;
+  password: string;
+};
+
+export type TRegisterData = {
+  name: string;
+  email: string;
+  password: string;
+};

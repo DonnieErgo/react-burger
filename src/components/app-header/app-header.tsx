@@ -1,11 +1,11 @@
 import styles from './app-header.module.css'
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from '@ya.praktikum/react-developer-burger-ui-components'
 import { NavLink, Link, useLocation } from 'react-router-dom'
+import { FC } from 'react'
 
-const AppHeader = () => {
+const AppHeader: FC = () => {
 
   const location = useLocation()
-
   const profileIcon = () => location.pathname !== '/profile' && location.pathname !== '/profile/orders' ? 'secondary' : 'primary'
 
   return (
