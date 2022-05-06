@@ -35,7 +35,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    checkAuth: state => { getCookie('refreshToken') ? getUser() : state.auth = false },
+    checkAuth: state => { getCookie('refreshToken') != null ? getUser() : state.auth = false },
     resetError: state => { state.error = '' },
     resetForgotPassRequestSuccess: state => { state.forgotPassRequestSuccess = false },
     resetResetPassRequestSuccess: state => { state.resetPassRequestSuccess = false },
@@ -50,7 +50,7 @@ const authSlice = createSlice({
         state.userData.name = payload.user.name
         state.userData.email = payload.user.email
         state.userData.password = ''
-        setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
+        setCookie('accessToken', payload.accessToken);
         setCookie('refreshToken', payload.refreshToken)
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
@@ -59,7 +59,7 @@ const authSlice = createSlice({
       })
     // ForgotPassword
       .addCase(forgotPassword.pending, state => { state.loading = true })
-      .addCase(forgotPassword.fulfilled, (state, { payload }) => {
+      .addCase(forgotPassword.fulfilled, (state, _) => {
         state.loading = false
         state.forgotPassRequestSuccess = true
       })
@@ -85,7 +85,7 @@ const authSlice = createSlice({
         state.userData.name = payload.user.name
         state.userData.email = payload.user.email
         state.userData.password = ''
-        setCookie('accessToken', payload.accessToken, {expires: 20 * 60});
+        setCookie('accessToken', payload.accessToken);
         setCookie('refreshToken', payload.refreshToken)
       })
       .addCase(loginRequest.rejected, (state, { payload }) => {
@@ -142,7 +142,7 @@ const authSlice = createSlice({
     // Get Token
       .addCase(getToken.pending, state => { state.loading = true })
       .addCase(getToken.fulfilled, (_, { payload }) => {
-        setCookie('accessToken', payload.accessToken, {expires: 20 * 60})
+        setCookie('accessToken', payload.accessToken)
         setCookie('refreshToken', payload.refreshToken)
       })
       .addCase(getToken.rejected, (state, { payload }) => {

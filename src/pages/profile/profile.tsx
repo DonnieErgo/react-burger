@@ -6,7 +6,7 @@ import { ProfileNavigation } from '../../components/profile-navigation/profile-n
 import { ProfileInfo } from '../../components/profile-info/profile-info'
 import { getCookie } from '../../utils/cookies'
 import OrderList from '../../components/order-list/order-list'
-import { getUserFeed } from '../../services/slices/websocket'
+import { getUserFeed, wsStop } from '../../services/slices/websocket'
 import { feedSelector } from '../../services/slices/feed'
 import Loading from '../../components/loading/loading'
 import OrderModal from '../../components/order-modal/order-modal'
@@ -14,7 +14,6 @@ import Modal from '../../components/modal/modal'
 import { useAppDispatch, useAppSelector } from '../../services/store'
 import { FC } from 'react'
 import { TLocation, TOrder} from '../../utils/types'
-
 
 export const Profile: FC = () => {
 
